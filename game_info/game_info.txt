@@ -1,0 +1,20 @@
+path_to_the_game_directory_realative_to_drive_c
+game_version_string
+game_executable_files
+launch_arguments
+additional_path_to_the_game_executable
+game_name
+
+--------------------------------------------------------------------
+
+The example of game_info.txt file:
+
+Program Files/The Super Game
+1.0.0
+Game.exe
+-language=russian
+bin
+The Super Game: Deluxe Edition
+
+It's important to follow the line numbering. If some lines are
+not used just leave them empty and don't remove.
