@@ -1,16 +1,17 @@
 #!/bin/bash
-
-### Wine Portable start script
-### Version 1.2.8
-### Author: Kron, liberodark
-### Email: kron4ek@gmail.com
+#
+# About: Wine Portable start script
+# Author: Kron, liberodark
+# Thanks : 
+# License: GNU GPLv3
 ### Link to latest version:
-###		Yandex.Disk: https://yadi.sk/d/IrofgqFSqHsPu
-###		Google.Drive: https://drive.google.com/open?id=1fTfJQhQSzlEkY-j3g0H6p4lwmQayUNSR
-###		Github: https://github.com/liberodark/wine_scripts
+# Yandex.Disk: https://yadi.sk/d/IrofgqFSqHsPu
+# Google.Drive: https://drive.google.com/open?id=1fTfJQhQSzlEkY-j3g0H6p4lwmQayUNSR
+# Github: https://github.com/liberodark/wine_scripts
 
-#### Script for creating portable Wine applications. It works in all Linux
-#### distributions that have bash shell and standard GNU utilities.
+version="1.2.9"
+
+echo "Welcome on Wine Portable Script $version"
 
 ## Exit if root
 
@@ -37,8 +38,10 @@ fi
 
 ## Script directory
 
-export SCRIPT="$(readlink -f "${BASH_SOURCE[0]}")"
-export DIR="$(dirname "$SCRIPT")"
+SCRIPT="$(readlink -f "${BASH_SOURCE[0]}")"
+export SCRIPT
+DIR="$(dirname "$SCRIPT")"
+export DIR
 
 ## Wine executables
 
@@ -384,7 +387,6 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
 			done
 		else
 			[ -d "My Documents" ] && rm -rf "My Documents" && ln -sfr Documents_Multilocale "My Documents"
-			[ -d "Мои документы" ] && rm -rf "Мои документы" && ln -sfr Documents_Multilocale "Мои документы"
 		fi
 
 		cd "$DIR" || exit
@@ -436,7 +438,7 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
 			echo "Executing winetricks actions, please wait."
 
 			"$WINESERVER" -w
-			"$DIR/winetricks" $(cat game_info/winetricks_list.txt) &>/dev/null
+			"$DIR/winetricks" "$(cat game_info/winetricks_list.txt)" &>/dev/null
 			"$WINESERVER" -w
 		else
 			echo "Winetricks not found and can't be downloaded (no internet connection)."
@@ -492,15 +494,15 @@ if [ ! -f .temp_files/lastwin ] || [ "$WINDOWS_VERSION" != "$(cat .temp_files/la
 
 		echo -e "Windows Registry Editor Version 5.00\n" > "$WINEPREFIX/drive_c/setwinver.reg"
 		echo -e "[HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows NT\\CurrentVersion]" >> "$WINEPREFIX/drive_c/setwinver.reg"
-		echo -e '"CSDVersion"="'$csdversion'"' >> "$WINEPREFIX/drive_c/setwinver.reg"
+		echo -e '"CSDVersion"="'"$csdversion"'"' >> "$WINEPREFIX/drive_c/setwinver.reg"
 		echo -e '"CurrentBuildNumber"="'$currentbuildnumber'"' >> "$WINEPREFIX/drive_c/setwinver.reg"
 		echo -e '"CurrentVersion"="'$currentversion'"' >> "$WINEPREFIX/drive_c/setwinver.reg"
 
 		echo -e "\n[HKEY_LOCAL_MACHINE\\System\\CurrentControlSet\\Control\\Windows]" >> "$WINEPREFIX/drive_c/setwinver.reg"
 		echo -e '"CSDVersion"='$csdversion_hex'\n' >> "$WINEPREFIX/drive_c/setwinver.reg"
 
-		"$WINE" regedit C:\setwinver.reg &>/dev/null
-		"$WINE64" regedit C:\setwinver.reg &>/dev/null
+		"$WINE" "regedit C:\setwinver.reg" &>/dev/null
+		"$WINE64" "regedit C:\setwinver.reg" &>/dev/null
 
 		rm -f "$WINEPREFIX/drive_c/setwinver.reg"
 		echo "$WINDOWS_VERSION" > .temp_files/lastwin
@@ -519,8 +521,8 @@ if [ "$USE_PULSEAUDIO" = 1 ] && [ ! -f "$WINEPREFIX/drive_c/usepulse.reg" ]; the
 	echo -e "[HKEY_CURRENT_USER\\Software\\Wine\\Drivers]\n" >> "$WINEPREFIX/drive_c/usepulse.reg"
 	echo -e '"Audio"="pulse"' >> "$WINEPREFIX/drive_c/usepulse.reg"
 
-	"$WINE" regedit C:\usepulse.reg &>/dev/null
-	"$WINE64" regedit C:\usepulse.reg &>/dev/null
+	"$WINE" "regedit C:\usepulse.reg" &>/dev/null
+	"$WINE64" "regedit C:\usepulse.reg" &>/dev/null
 
 	rm -f "$WINEPREFIX/drive_c/usealsa.reg"
 elif [ "$USE_PULSEAUDIO" = 0 ] && [ ! -f "$WINEPREFIX/drive_c/usealsa.reg" ]; then
@@ -530,8 +532,8 @@ elif [ "$USE_PULSEAUDIO" = 0 ] && [ ! -f "$WINEPREFIX/drive_c/usealsa.reg" ]; th
 	echo -e "[HKEY_CURRENT_USER\\Software\\Wine\\Drivers]\n" >> "$WINEPREFIX/drive_c/usealsa.reg"
 	echo -e '"Audio"="alsa"' >> "$WINEPREFIX/drive_c/usealsa.reg"
 
-	"$WINE" regedit C:\usealsa.reg &>/dev/null
-	"$WINE64" regedit C:\usealsa.reg &>/dev/null
+	"$WINE" "regedit C:\usealsa.reg" &>/dev/null
+	"$WINE64" "regedit C:\usealsa.reg" &>/dev/null
 
 	rm -f "$WINEPREFIX/drive_c/usepulse.reg"
 fi
@@ -545,8 +547,8 @@ if [ "$CSMT_DISABLE" = 1 ] && [ ! -f "$WINEPREFIX/drive_c/csmt.reg" ]; then
 	echo -e "[HKEY_CURRENT_USER\Software\Wine\Direct3D]\n" >> "$WINEPREFIX/drive_c/csmt.reg"
 	echo -e '"csmt"=dword:0\n' >> "$WINEPREFIX/drive_c/csmt.reg"
 
-	"$WINE" regedit C:\csmt.reg &>/dev/null
-	"$WINE64" regedit C:\csmt.reg &>/dev/null
+	"$WINE" "regedit C:\csmt.reg" &>/dev/null
+	"$WINE64" "regedit C:\csmt.reg" &>/dev/null
 elif [ "$CSMT_DISABLE" = 0 ] && [ -f "$WINEPREFIX/drive_c/csmt.reg" ]; then
 	echo "Enabling CSMT"
 
@@ -554,8 +556,8 @@ elif [ "$CSMT_DISABLE" = 0 ] && [ -f "$WINEPREFIX/drive_c/csmt.reg" ]; then
 	echo -e "[HKEY_CURRENT_USER\Software\Wine\Direct3D]\n" >> "$WINEPREFIX/drive_c/csmt.reg"
 	echo -e '"csmt"=-' >> "$WINEPREFIX/drive_c/csmt.reg"
 
-	"$WINE" regedit C:\csmt.reg &>/dev/null
-	"$WINE64" regedit C:\csmt.reg &>/dev/null
+	"$WINE" "regedit C:\csmt.reg" &>/dev/null
+	"$WINE64" "regedit C:\csmt.reg" &>/dev/null
 
 	rm -f "$WINEPREFIX/drive_c/csmt.reg"
 fi
@@ -567,18 +569,18 @@ if [ "$DXVK" = 1 ]; then
 	if [ ! -f "$DIR/game_info/dlls/x64/dxgi.dll" ] && grep dxvk "$WINEPREFIX/winetricks.log" &>/dev/null; then
 		mkdir -p "$DIR/game_info/dlls"
 
-		cp "$WINEPREFIX/drive_c/windows/system32/d3d11.dll" "$DIR/game_info/dlls/x64"
+			cp "$WINEPREFIX/drive_c/windows/system32/d3d11.dll" "$DIR/game_info/dlls/x64"
         	cp "$WINEPREFIX/drive_c/windows/system32/d3d10core.dll" "$DIR/game_info/dlls/x64"
         	cp "$WINEPREFIX/drive_c/windows/system32/d3d10.dll" "$DIR/game_info/dlls/x64"
         	cp "$WINEPREFIX/drive_c/windows/system32/d3d10_1.dll" "$DIR/game_info/dlls/x64"
-		cp "$WINEPREFIX/drive_c/windows/system32/d3d9.dll" "$DIR/game_info/dlls/x64"
+			cp "$WINEPREFIX/drive_c/windows/system32/d3d9.dll" "$DIR/game_info/dlls/x64"
         	cp "$WINEPREFIX/drive_c/windows/system32/dxgi.dll" "$DIR/game_info/dlls/x64"
 
         	cp "$WINEPREFIX/drive_c/windows/syswow64/d3d11.dll" "$DIR/game_info/dlls/x32"
         	cp "$WINEPREFIX/drive_c/windows/syswow64/d3d10core.dll" "$DIR/game_info/dlls/x32"
         	cp "$WINEPREFIX/drive_c/windows/syswow64/d3d10.dll" "$DIR/game_info/dlls/x32"
         	cp "$WINEPREFIX/drive_c/windows/syswow64/d3d10_1.dll" "$DIR/game_info/dlls/x32"
-		cp "$WINEPREFIX/drive_c/windows/syswow64/d3d9.dll" "$DIR/game_info/dlls/x32"
+			cp "$WINEPREFIX/drive_c/windows/syswow64/d3d9.dll" "$DIR/game_info/dlls/x32"
         	cp "$WINEPREFIX/drive_c/windows/syswow64/dxgi.dll" "$DIR/game_info/dlls/x32"
 
 	else
@@ -599,9 +601,9 @@ if [ "$DXVK" = 1 ]; then
 	fi
 fi
 
-if [ $DXVK = 0 ]; then
+if [ "$DXVK" = 0 ]; then
     export WINEDLLOVERRIDES="$WINEDLLOVERRIDES;dxgi,d3d9,d3d10,d3d10_1,d3d10core,d3d11=b"
-elif [ $DXVK = 1 ] && [ -f "$DIR/game_info/dlls/x64/dxgi.dll" ]; then
+elif [ "$DXVK" = 1 ] && [ -f "$DIR/game_info/dlls/x64/dxgi.dll" ]; then
     export WINEDLLOVERRIDES="$WINEDLLOVERRIDES;dxgi,d3d9,d3d10,d3d10_1,d3d10core,d3d11=n;nvapi64,nvapi="
 
 	if [ ! -d "$DIR/cache/dxvk" ]; then
@@ -645,7 +647,7 @@ echo -ne "\nWine: $WINE_VERSION"
 if [ $USE_SYSTEM_WINE = 1 ]; then
 	echo -ne " (using system Wine)"
 
-	if [ ! -z $OLD_GLIBC ]; then echo -ne " (old GLIBC)"; fi
+	if [ -z $OLD_GLIBC ]; then echo -ne " (old GLIBC)"; fi
 fi
 
 echo -ne "\nArch: x$(echo "$WINEARCH" | tail -c 3)"
