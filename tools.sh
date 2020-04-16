@@ -1,19 +1,19 @@
 #!/bin/bash
-
-### Wine Portable tools script
-### Version 1.1
-### Author: Kron, liberodark
-### Email: kron4ek@gmail.com
-### Link to latest version:
-###		Yandex.Disk: https://yadi.sk/d/IrofgqFSqHsPu
-###		Google.Drive: https://drive.google.com/open?id=1fTfJQhQSzlEkY-j3g0H6p4lwmQayUNSR
-###		Github: https://github.com/liberodark/wine_scripts
+#
+# About: Wine Portable start script
+# Author: Kron, liberodark
+# Thanks : 
+# License: GNU GPLv3
 
 #### Script for launching Wine tools such as winecfg, regedit
 #### and winefile. Also this script can cleanup directory from
 #### unnecessary files, create icons in Applications Menu and Desktop
 #### and kill all processes in preifx. It can also use winetricks
 #### to istall components and apply tweaks.
+
+version="1.2"
+
+echo "Welcome on Wine Portable Script Tools $version"
 
 ## Exit if root
 
