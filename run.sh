@@ -734,6 +734,7 @@ if [ "$COREFONT" = 1 ]; then
 
 			"$WINE" start "$file" /Q &>/dev/null
 		done
+	sed -i "s@COREFONT=1@COREFONT=0@g" "$DIR/settings_$SCRIPT_NAME"
 	echo "COREFONT is Installed"
 fi
 
