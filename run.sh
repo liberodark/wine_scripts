@@ -647,7 +647,7 @@ echo -ne "\nWine: $WINE_VERSION"
 if [ $USE_SYSTEM_WINE = 1 ]; then
 	echo -ne " (using system Wine)"
 
-	if [ -z $OLD_GLIBC ]; then echo -ne " (old GLIBC)"; fi
+	if [ -n "$OLD_GLIBC" ]; then echo -ne " (old GLIBC)"; fi
 fi
 
 echo -ne "\nArch: x$(echo "$WINEARCH" | tail -c 3)"
