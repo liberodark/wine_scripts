@@ -87,6 +87,8 @@ if [ -z "$CSMT_DISABLE" ] || [ -z "$DXVK" ] || [ -z "$USE_PULSEAUDIO" ] || [ -z 
 	echo "ESYNC=1" >> "$DIR/settings_$SCRIPT_NAME"
 	echo "PBA=0" >> "$DIR/settings_$SCRIPT_NAME"
 	echo "MF=0" >> "$DIR/settings_$SCRIPT_NAME"
+	echo "GDIPLUS=0" >> "$DIR/settings_$SCRIPT_NAME"
+	echo "COREFONT=0" >> "$DIR/settings_$SCRIPT_NAME"
 	echo >> "$DIR/settings_$SCRIPT_NAME"
 	echo "WINDOWS_VERSION=win7" >> "$DIR/settings_$SCRIPT_NAME"
 	echo "PREFIX_ARCH=win64" >> "$DIR/settings_$SCRIPT_NAME"
@@ -694,7 +696,6 @@ echo -e "\n\n======================================================="
 echo
 
 # Install MF
-
 if [ "$MF" = 1 ]; then
 	pushd "$DIR/game_info/mf/" &>/dev/null || exit
 	echo "Install MF"
@@ -705,7 +706,6 @@ if [ "$MF" = 1 ]; then
 fi
 
 # Install MSVC
-
 if [ "$MSVC" = 1 ]; then
 	pushd "$DIR/game_info/msvc/2015/" &>/dev/null || exit
 	echo "Install MSVC"
@@ -713,6 +713,28 @@ if [ "$MSVC" = 1 ]; then
     ./install.sh &>/dev/null
 	popd &>/dev/null || exit
 	echo "MSVC is Installed"
+fi
+
+# Install GDIPLUS
+if [ "$GDIPLUS" = 1 ]; then
+	pushd "$DIR/game_info/gdiplus/" &>/dev/null || exit
+	echo "Install GDIPLUS"
+	cp syswow64/* "$WINEPREFIX/drive_c/windows/syswow64"
+    cp system32/* "$WINEPREFIX/drive_c/windows/system32"
+    export WINEDLLOVERRIDES="$WINEDLLOVERRIDES;gdiplus=n"
+	popd &>/dev/null || exit
+	echo "GDIPLUS is Installed"
+fi
+
+# Install COREFONT
+if [ "$COREFONT" = 1 ]; then
+	echo "Install COREFONT"
+	for file in game_info/corefont/*.exe; do
+			echo "Executing file $file"
+
+			"$WINE" start "$file" /Q &>/dev/null
+		done
+	echo "COREFONT is Installed"
 fi
 
 # Launch the game
