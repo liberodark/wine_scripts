@@ -9,7 +9,7 @@
 # Google.Drive: https://drive.google.com/open?id=1fTfJQhQSzlEkY-j3g0H6p4lwmQayUNSR
 # Github: https://github.com/liberodark/wine_scripts
 
-version="1.2.9"
+version="1.3.0"
 
 echo "Welcome on Wine Portable Script $version"
 
@@ -419,6 +419,48 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
 		done
 	fi
 
+	# Install MF
+	if [ "$MF" = 1 ]; then
+		pushd "$DIR/game_info/mf/" &>/dev/null || exit
+		echo "Install MF"
+		chmod +x install-mf.sh
+    	./install-mf.sh &>/dev/null
+		popd &>/dev/null || exit
+		echo "MF is Installed"
+	fi
+
+	# Install MSVC
+	if [ "$MSVC" = 1 ]; then
+		pushd "$DIR/game_info/msvc/2015/" &>/dev/null || exit
+		echo "Install MSVC"
+		chmod +x install.sh
+    	./install.sh &>/dev/null
+		popd &>/dev/null || exit
+		echo "MSVC is Installed"
+	fi
+
+	# Install GDIPLUS
+	if [ "$GDIPLUS" = 1 ]; then
+		pushd "$DIR/game_info/gdiplus/" &>/dev/null || exit
+		echo "Install GDIPLUS"
+		cp syswow64/* "$WINEPREFIX/drive_c/windows/syswow64"
+    	cp system32/* "$WINEPREFIX/drive_c/windows/system32"
+    	export WINEDLLOVERRIDES="$WINEDLLOVERRIDES;gdiplus=n"
+		popd &>/dev/null || exit
+		echo "GDIPLUS is Installed"
+	fi
+
+	# Install COREFONT
+	if [ "$COREFONT" = 1 ]; then
+		echo "Install COREFONT"
+		for file in game_info/corefont/*.exe; do
+			echo "Executing file $file"
+
+			"$WINE" start "$file" /Q &>/dev/null
+		done
+		echo "COREFONT is Installed"
+	fi
+
 	# Execute custom winetricks actions
 	if [ -f game_info/winetricks_list.txt ]; then
 		if [ ! -f "$DIR/winetricks" ]; then
@@ -694,48 +736,6 @@ fi
 
 echo -e "\n\n======================================================="
 echo
-
-# Install MF
-if [ "$MF" = 1 ]; then
-	pushd "$DIR/game_info/mf/" &>/dev/null || exit
-	echo "Install MF"
-	chmod +x install-mf.sh
-    ./install-mf.sh &>/dev/null
-	popd &>/dev/null || exit
-	echo "MF is Installed"
-fi
-
-# Install MSVC
-if [ "$MSVC" = 1 ]; then
-	pushd "$DIR/game_info/msvc/2015/" &>/dev/null || exit
-	echo "Install MSVC"
-	chmod +x install.sh
-    ./install.sh &>/dev/null
-	popd &>/dev/null || exit
-	echo "MSVC is Installed"
-fi
-
-# Install GDIPLUS
-if [ "$GDIPLUS" = 1 ]; then
-	pushd "$DIR/game_info/gdiplus/" &>/dev/null || exit
-	echo "Install GDIPLUS"
-	cp syswow64/* "$WINEPREFIX/drive_c/windows/syswow64"
-    cp system32/* "$WINEPREFIX/drive_c/windows/system32"
-    export WINEDLLOVERRIDES="$WINEDLLOVERRIDES;gdiplus=n"
-	popd &>/dev/null || exit
-	echo "GDIPLUS is Installed"
-fi
-
-# Install COREFONT
-if [ "$COREFONT" = 1 ]; then
-	echo "Install COREFONT"
-	for file in game_info/corefont/*.exe; do
-			echo "Executing file $file"
-
-			"$WINE" start "$file" /Q &>/dev/null
-		done
-	echo "COREFONT is Installed"
-fi
 
 # Launch the game
 cd "$GAME_PATH/$(echo "$GAME_INFO" | sed -n 5p)" || exit
