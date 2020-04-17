@@ -697,7 +697,7 @@ echo
 
 # Install MF
 if [ "$MF" = 1 ]; then
-	pushd "$DIR/game_info/mf/" &>/dev/null || exit
+	pushd "$DIR/game_info/tweaks/mf/" &>/dev/null || exit
 	echo "Install MF"
 	chmod +x install-mf.sh
     ./install-mf.sh &>/dev/null
@@ -707,7 +707,7 @@ fi
 
 # Install MSVC
 if [ "$MSVC" = 1 ]; then
-	pushd "$DIR/game_info/msvc/2015/" &>/dev/null || exit
+	pushd "$DIR/game_info/tweaks/msvc/2015/" &>/dev/null || exit
 	echo "Install MSVC"
 	chmod +x install.sh
     ./install.sh &>/dev/null
@@ -717,7 +717,7 @@ fi
 
 # Install GDIPLUS
 if [ "$GDIPLUS" = 1 ]; then
-	pushd "$DIR/game_info/gdiplus/" &>/dev/null || exit
+	pushd "$DIR/game_info/tweaks/gdiplus/" &>/dev/null || exit
 	echo "Install GDIPLUS"
 	cp syswow64/* "$WINEPREFIX/drive_c/windows/syswow64"
     cp system32/* "$WINEPREFIX/drive_c/windows/system32"
@@ -729,7 +729,7 @@ fi
 # Install COREFONT
 if [ "$COREFONT" = 1 ]; then
 	echo "Install COREFONT"
-	for file in game_info/corefont/*.exe; do
+	for file in game_info/tweaks/corefont/*.exe; do
 			echo "Executing file $file"
 
 			"$WINE" start "$file" /Q &>/dev/null
