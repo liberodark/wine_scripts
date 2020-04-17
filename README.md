@@ -71,6 +71,7 @@ removed or not created.
 * game_info.txt - information about the game
 * data - directory containing game files
 * dlls - libraries and other files intended to put into system32 directory
+* tweaks - directory containing tweaks for help to run game
 * additional - specific files (for example, settings for games or fonts)
 * patch - same as additional but is for system / app files
 * regs - tweaks for registry
