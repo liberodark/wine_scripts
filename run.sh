@@ -9,121 +9,145 @@
 # Google.Drive: https://drive.google.com/open?id=1fTfJQhQSzlEkY-j3g0H6p4lwmQayUNSR
 # Github: https://github.com/liberodark/wine_scripts
 
-version="1.2.9"
+version="1.3.0"
 
 echo "Welcome on Wine Portable Script $version"
 
+check_root (){
 ## Exit if root
-
 if [[ "$EUID" = 0 ]]
   then echo "Do not run this script as root!"
   exit
 fi
+}
 
+check_wine_archive (){
 # Uncompress Wine
 if [ -e "wine.tar.xz" ]; then
 tar -xvf wine.tar.xz && rm -f wine.tar.xz
 fi
+}
 
+show_help (){
 ## Show help
-
 if [ "$1" == "--help" ]; then
 	clear
 	echo -e "Available arguments:\n"
 	echo -e "--debug\t\t\t\tenable Debug mode to see more information"
 	echo -e "\t\t\t\tin output when the game starts."
 fi
+}
 
 ### Set variables
 
-## Script directory
 
+dir_information (){
+## Script directory
 SCRIPT="$(readlink -f "${BASH_SOURCE[0]}")"
 export SCRIPT
 DIR="$(dirname "$SCRIPT")"
 export DIR
+}
 
+wine_exec (){
 ## Wine executables
-
 WINE="$DIR/wine/bin/wine"
 WINE64="$DIR/wine/bin/wine64"
 WINESERVER="$DIR/wine/bin/wineserver"
 MSIEXEC="$DIR/wine/bin/msiexec"
+}
 
+wine_variables (){
 ## Wine variables
-
 export WINEPREFIX="$DIR/prefix"
 export WINEDEBUG="-all"
 export WINEDLLOVERRIDES="winemenubuilder.exe="
+}
 
+wine_debug (){
 # Enable WINEDEBUG if --debug argument is passed to script
 if [ "$1" = "--debug" ]; then export WINEDEBUG="err+all,fixme-all"; fi
+}
 
+other_variables (){
 ## Other variables
-
 export XDG_CACHE_HOME="$DIR/cache"
 export DXVK_LOG_PATH="$DIR/cache/dxvk"
 export DXVK_STATE_CACHE_PATH="$DIR/cache/dxvk"
+}
 
+script_variables (){
 USERNAME="$(id -un)"
 
 ## Script variables
-
 # Get settings (variables) from settings file if exists
 SCRIPT_NAME="$(basename "$SCRIPT" | cut -d. -f1)"
 source "$DIR/settings_$SCRIPT_NAME" &>/dev/null
 
 # Generate settings file if it's not exists or incomplete
 if [ -z "$CSMT_DISABLE" ] || [ -z "$DXVK" ] || [ -z "$USE_PULSEAUDIO" ] || [ -z "$PBA" ] || [ -z "$GLIBC_REQUIRED" ]; then
-	echo "CSMT_DISABLE=0" > "$DIR/settings_$SCRIPT_NAME"
-	echo "USE_PULSEAUDIO=0" >> "$DIR/settings_$SCRIPT_NAME"
-	echo "USE_SYSTEM_WINE=0" >> "$DIR/settings_$SCRIPT_NAME"
-	echo "RESTORE_RESOLUTION=1" >> "$DIR/settings_$SCRIPT_NAME"
-	echo "VIRTUAL_DESKTOP=0" >> "$DIR/settings_$SCRIPT_NAME"
-	echo "VIRTUAL_DESKTOP_SIZE=800x600" >> "$DIR/settings_$SCRIPT_NAME"
-	echo >> "$DIR/settings_$SCRIPT_NAME"
-	echo "DXVK=1" >> "$DIR/settings_$SCRIPT_NAME"
-	echo "DXVK_HUD=0" >> "$DIR/settings_$SCRIPT_NAME"
-	echo "ESYNC=1" >> "$DIR/settings_$SCRIPT_NAME"
-	echo "PBA=0" >> "$DIR/settings_$SCRIPT_NAME"
-	echo "MF=0" >> "$DIR/settings_$SCRIPT_NAME"
-	echo "GDIPLUS=0" >> "$DIR/settings_$SCRIPT_NAME"
-	echo "COREFONT=0" >> "$DIR/settings_$SCRIPT_NAME"
-	echo >> "$DIR/settings_$SCRIPT_NAME"
-	echo "WINDOWS_VERSION=win7" >> "$DIR/settings_$SCRIPT_NAME"
-	echo "PREFIX_ARCH=win64" >> "$DIR/settings_$SCRIPT_NAME"
-	echo >> "$DIR/settings_$SCRIPT_NAME"
-	echo "# Change these GLIBC variables only if you know what you're doing" >> "$DIR/settings_$SCRIPT_NAME"
-	echo >> "$DIR/settings_$SCRIPT_NAME"
-	echo "CHECK_GLIBC=1" >> "$DIR/settings_$SCRIPT_NAME"
-	echo "GLIBC_REQUIRED=2.23" >> "$DIR/settings_$SCRIPT_NAME"
-	echo >> "$DIR/settings_$SCRIPT_NAME"
-	echo "# You can also put custom variables in this file" >> "$DIR/settings_$SCRIPT_NAME"
+cat << EOF > "$DIR/settings_$SCRIPT_NAME"
+CSMT_DISABLE=0
+USE_PULSEAUDIO=1
+USE_SYSTEM_WINE=0
+RESTORE_RESOLUTION=1
+VIRTUAL_DESKTOP=0
+VIRTUAL_DESKTOP_SIZE=800x600
+
+DXVK=1
+DXVK_HUD=0
+ESYNC=1
+PBA=0
+MF=0
+MSVC=0
+GDIPLUS=0
+COREFONT=0
+
+WINDOWS_VERSION=win10
+PREFIX_ARCH=win64
+
+# Change these GLIBC variables only if you know what you're doing
+
+CHECK_GLIBC=1
+GLIBC_REQUIRED=2.23
+
+# You can also put custom variables in this file
+EOF
 
 	source "$DIR/settings_$SCRIPT_NAME"
 fi
+}
 
+export_script_variables (){
 export DXVK_HUD
 export WINEESYNC=$ESYNC
 export PBA_ENABLE=$PBA
 export WINEARCH=$PREFIX_ARCH
+}
 
+virtual_desktop (){
 # Enable virtual desktop if VIRTUAL_DESKTOP env is set to 1
 if [ "$VIRTUAL_DESKTOP" = 1 ]; then
 	VDESKTOP="explorer /desktop=Wine,$VIRTUAL_DESKTOP_SIZE"
 fi
+}
 
+get_resolution (){
 # Get current screen resolution
 if [ "$RESTORE_RESOLUTION" = 1 ]; then
 	RESOLUTION="$(xrandr -q | sed -n -e 's/.* connected primary \([^ +]*\).*/\1/p')"
     OUTPUT="$(xrandr -q | sed -n -e 's/\([^ ]*\) connected primary.*/\1/p')"
 fi
+}
 
+make_executable (){
 # Make Wine binaries executable
 if [ -d "$DIR/wine" ] && [ ! -x "$DIR/wine/bin/wine" ]; then
 	chmod -R 700 "$DIR/wine"
 fi
+}
 
+check_glib (){
 # Use system Wine if GLIBC checking is enabled and GLIBC is older than required
 if [ "$USE_SYSTEM_WINE" = 0 ] && [ "$CHECK_GLIBC" = 1 ]; then
 	GLIBC_VERSION="$(ldd --version | head -n1 | sed 's/\(.*\) //g' | sed 's/\.[^.]*//2g')"
@@ -133,7 +157,9 @@ if [ "$USE_SYSTEM_WINE" = 0 ] && [ "$CHECK_GLIBC" = 1 ]; then
 		OLD_GLIBC=1
 	fi
 fi
+}
 
+use_system_wine (){
 # Use system Wine if needed
 if [ ! -f "$WINE" ] || [ $USE_SYSTEM_WINE = 1 ]; then
 	if command -v wine-development &>/dev/null; then
@@ -148,7 +174,9 @@ if [ ! -f "$WINE" ] || [ $USE_SYSTEM_WINE = 1 ]; then
 
 	USE_SYSTEM_WINE=1
 fi
+}
 
+set_winearch (){
 # Check WINEARCH variable and system architecture
 if [ "$WINEARCH" = "win64" ] && ! "$WINE64" --version &>/dev/null; then
 		echo "WINEARCH is set to win64."
@@ -169,7 +197,9 @@ elif [ "$WINEARCH" = "win32" ] && [ $USE_SYSTEM_WINE = 0 ]; then
 		exit
 	fi
 fi
+}
 
+check_pba_esync (){
 # Check if Wine has PBA or ESYNC features
 mkdir -p "$DIR/.temp_files"
 if [ ! -f "$DIR/.temp_files/pba_status" ]; then
@@ -195,7 +225,9 @@ else NO_PBA_FOUND=0; fi
 if [ "$(cat "$DIR/.temp_files/esync_status")" = "no" ] || [ $USE_SYSTEM_WINE = 1 ]; then
 	NO_ESYNC_FOUND=1
 else NO_ESYNC_FOUND=0; fi
+}
 
+disable_esync (){
 # Disable ESYNC if ulimit fails
 ESYNC_FORCE_OFF=0
 if [ $NO_ESYNC_FOUND = 0 ] && [ "$WINEESYNC" = 1 ]; then
@@ -204,9 +236,10 @@ if [ $NO_ESYNC_FOUND = 0 ] && [ "$WINEESYNC" = 1 ]; then
 		ESYNC_FORCE_OFF=1
 	fi
 fi
+}
 
+game_variable (){
 ## Game-specific variables
-
 # Use game_info_SCRIPTNAME.txt file if exists
 if [ -f "$DIR/game_info/game_info_$SCRIPT_NAME.txt" ]; then
 	GAME_INFO="$(cat "$DIR/game_info/game_info_$SCRIPT_NAME.txt")"
@@ -225,28 +258,31 @@ for arg in "$@"; do
 		ARGS="$ARGS $arg"
     fi
 done
+}
 
 ### Prepare for launching game
 
+check_wine_version (){
 ## Exit if there is no Wine
-
 WINE_VERSION="$("$WINE" --version)"
 if [ ! "$WINE_VERSION" ]; then
 	clear
 	echo "There is no Wine available in your system!"
 	exit
 fi
+}
 
+check_game_info (){
 ## Exit if there is no game_info.txt file
-
 if [ ! "$GAME_INFO" ]; then
 	clear
 	echo "There is no game_info.txt file!"
 	exit
 fi
+}
 
+check_permission (){
 ## Exit if user have no write permission on directory
-
 if ! touch "$DIR/write_test"; then
 	clear
 	echo "You have no write permissions on this directory!"
@@ -257,13 +293,15 @@ if ! touch "$DIR/write_test"; then
 	exit
 fi
 rm -f "$DIR/write_test"
+}
 
+change_dir (){
 ## Change working directory
-
 cd "$DIR" || exit
+}
 
+setup_wine_prefix (){
 ## Setup prefix
-
 if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WINE_VERSION" != "$(cat .temp_files/lastwine)" ]; then
 	# Move old prefix just in case
 	mv prefix "prefix_$(date '+%d.%m_%H:%M:%S')" &>/dev/null
@@ -283,7 +321,10 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
 	# Create symlink to game directory
 	mkdir -p "$GAME_PATH"; rm -rf "$GAME_PATH"
 	ln -sfr game_info/data "$GAME_PATH"
+	fi
+}
 
+run_exe (){
 	# Execute files in game_info/exe directory
 	if [ -d game_info/exe ]; then
 		echo "Executing files"
@@ -295,7 +336,9 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
 			"$WINESERVER" -w
 		done
 	fi
+}
 
+run_msi (){
 	# Execute files in game_info/msi directory
 	if [ -d game_info/msi ]; then
 		echo "Executing files"
@@ -307,7 +350,9 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
 			"$WINESERVER" -w
 		done
 	fi
+}
 
+run_reg (){
 	# Apply reg files
 	if [ -d game_info/regs ]; then
 		echo "Importing registry files"
@@ -319,7 +364,9 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
 			"$WINE64" regedit "$file" &>/dev/null
 		done
 	fi
+}
 
+add_dll (){
 	# Symlink requeired dlls, override and register them
 	if [ -d game_info/dlls ]; then
 		echo "Symlinking and registering dlls"
@@ -349,15 +396,21 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
 
 		rm -f dlloverrides.reg
 	fi
+}
 
+create_document_dir (){
 	# Make documents directory
 	echo "Sandboxing prefix"
+}
 
+define_username (){
 	# Valve's Proton uses steamuser as username
 	if [ -d "$WINEPREFIX/drive_c/users/steamuser" ]; then
 		USERNAME=steamuser
 	fi
+}
 
+configure_document (){
 	if [ ! -d "$DIR/documents" ]; then
 		mv "$WINEPREFIX/drive_c/users/$USERNAME" "$DIR/documents" &>/dev/null
 		mv "$WINEPREFIX/drive_c/users/Public" "$DIR/documents/Public"
@@ -367,11 +420,15 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
 	ln -sfr "$DIR/documents" "$WINEPREFIX/drive_c/users/$USERNAME"
 	ln -sfr "$DIR/documents/Public" "$WINEPREFIX/drive_c/users/Public"
 	ln -sfr "$DIR/documents" "$WINEPREFIX/drive_c/users/user"
+}
 
+sandbox_wine_prefix (){
 	# Sandbox the prefix; Borrowed from winetricks scripts
 	rm -f "$WINEPREFIX/dosdevices/z:"
 	ln -sfr "$DIR" "$WINEPREFIX/dosdevices/k:"
+}
 
+create_documents_multilocale (){
 	if cd "$WINEPREFIX/drive_c/users/$USERNAME"; then
 		# Use one directory for all symlinks
 		# This is necessary for multilocale compatibility
@@ -393,10 +450,14 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
 
 		cd "$DIR" || exit
 	fi
+}
 
+disable_timestamp (){
 	"$WINE" regedit /D 'HKEY_LOCAL_MACHINE\\Software\\Microsoft\Windows\CurrentVersion\Explorer\Desktop\Namespace\{9D20AAE8-0625-44B0-9CA7-71889C2254D9}' &>/dev/null
 	echo disable > "$WINEPREFIX/.update-timestamp"
+}
 
+copy_additional_content (){
 	# Copy content from additional directories
 	if [ -d game_info/additional ]; then
 		for f in game_info/additional/*; do
@@ -405,7 +466,9 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
 			cp -r "$f" "$DIR"
 		done
 	fi
+}
 
+run_sh (){
 	# Execute scripts in game_info/sh directory
 	if [ -d game_info/sh ]; then
 		echo "Executing scripts"
@@ -418,7 +481,9 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
 			"$file"
 		done
 	fi
+}
 
+run_custom_winetricks (){
 	# Execute custom winetricks actions
 	if [ -f game_info/winetricks_list.txt ]; then
 		if [ ! -f "$DIR/winetricks" ]; then
@@ -446,20 +511,24 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
 			echo "Winetricks not found and can't be downloaded (no internet connection)."
 		fi
 	fi
+}
 
+enable_wine_debug (){
 	# Enable WINEDEBUG during first run
 	export WINEDEBUG="err+all,fixme-all"
+}
 
+save_last_user_information (){
 	# Save information about last user name and Wine version
 	USERNAME="$(id -un)"
 
 	mkdir -p .temp_files
 	echo "$USERNAME" > .temp_files/lastuser
 	echo "$WINE_VERSION" > .temp_files/lastwine
-fi
+}
 
+set_windows_version (){
 ## Set windows version
-
 if [ ! -f .temp_files/lastwin ] || [ "$WINDOWS_VERSION" != "$(cat .temp_files/lastwin)" ]; then
 	if [ "$WINDOWS_VERSION" = "winxp" ] || [ "$WINDOWS_VERSION" = "win10" ] || [ "$WINDOWS_VERSION" = "win7" ]; then
 		echo "Changing Windows version to $WINDOWS_VERSION"
@@ -513,9 +582,10 @@ if [ ! -f .temp_files/lastwin ] || [ "$WINDOWS_VERSION" != "$(cat .temp_files/la
 		echo "Please, use one of the available versions: winxp, win2k or win7."
 	fi
 fi
+}
 
+set_sound_driver (){
 ## Set sound driver to PulseAudio
-
 if [ "$USE_PULSEAUDIO" = 1 ] && [ ! -f "$WINEPREFIX/drive_c/usepulse.reg" ]; then
 	echo "Set audio driver to PulseAudio"
 
@@ -539,9 +609,10 @@ elif [ "$USE_PULSEAUDIO" = 0 ] && [ ! -f "$WINEPREFIX/drive_c/usealsa.reg" ]; th
 
 	rm -f "$WINEPREFIX/drive_c/usepulse.reg"
 fi
+}
 
+enable_disable_csmt (){
 ## Disable CSMT if required
-
 if [ "$CSMT_DISABLE" = 1 ] && [ ! -f "$WINEPREFIX/drive_c/csmt.reg" ]; then
 	echo "Disabling CSMT"
 
@@ -563,10 +634,11 @@ elif [ "$CSMT_DISABLE" = 0 ] && [ -f "$WINEPREFIX/drive_c/csmt.reg" ]; then
 
 	rm -f "$WINEPREFIX/drive_c/csmt.reg"
 fi
+}
 
+add_dxvk (){
 ## Disable DXVK if required
 ## Also disable nvapi library if DXVK is enabled
-
 if [ "$DXVK" = 1 ]; then
 	if [ ! -f "$DIR/game_info/dlls/x64/dxgi.dll" ] && grep dxvk "$WINEPREFIX/winetricks.log" &>/dev/null; then
 		mkdir -p "$DIR/game_info/dlls"
@@ -602,7 +674,9 @@ if [ "$DXVK" = 1 ]; then
 		cp "$DIR/game_info/dlls/x32/dxgi.dll" "$WINEPREFIX/drive_c/windows/syswow64"
 	fi
 fi
+}
 
+dxvk_overrides_disable_nvapi (){
 if [ "$DXVK" = 0 ]; then
     export WINEDLLOVERRIDES="$WINEDLLOVERRIDES;dxgi,d3d9,d3d10,d3d10_1,d3d10core,d3d11=b"
 elif [ "$DXVK" = 1 ] && [ -f "$DIR/game_info/dlls/x64/dxgi.dll" ]; then
@@ -616,9 +690,10 @@ elif [ "$DXVK" = 1 ] && [ -f "$DIR/game_info/dlls/x64/dxgi.dll" ]; then
 		ln -sfr "$DIR/cache/dxvk" "$WINEPREFIX/dosdevices/j:"
 	fi
 fi
+}
 
+run_sh_always (){
 ## Execute custom scripts
-
 if [ -d game_info/sh/everytime ]; then
 	echo "Executing scripts"
 
@@ -628,7 +703,9 @@ if [ -d game_info/sh/everytime ]; then
 		"$file"
 	done
 fi
+}
 
+copy_content (){
 # Copy content from patch directories
 if [ -d game_info/patch ]; then
 	for f in game_info/patch/*; do
@@ -637,9 +714,10 @@ if [ -d game_info/patch ]; then
 		cp -r "$f" "$DIR/prefix/"
 	done
 fi
+}
 
+display_game_information (){
 ## Run the game
-
 # Output game, vars and Wine information
 clear
 echo "======================================================="
@@ -649,7 +727,7 @@ echo -ne "\nWine: $WINE_VERSION"
 if [ $USE_SYSTEM_WINE = 1 ]; then
 	echo -ne " (using system Wine)"
 
-	if [ -n "$OLD_GLIBC" ]; then echo -ne " (old GLIBC)"; fi
+	if [ -z $OLD_GLIBC ]; then echo -ne " (old GLIBC)"; fi
 fi
 
 echo -ne "\nArch: x$(echo "$WINEARCH" | tail -c 3)"
@@ -694,58 +772,143 @@ fi
 
 echo -e "\n\n======================================================="
 echo
+}
 
+run_mf (){
 # Install MF
 if [ "$MF" = 1 ]; then
-	pushd "$DIR/game_info/tweaks/mf/" &>/dev/null || exit
+	pushd "$DIR/game_info/mf/" &>/dev/null || exit
 	echo "Install MF"
 	chmod +x install-mf.sh
     ./install-mf.sh &>/dev/null
 	popd &>/dev/null || exit
 	echo "MF is Installed"
 fi
+}
 
+run_msvc (){
 # Install MSVC
 if [ "$MSVC" = 1 ]; then
-	pushd "$DIR/game_info/tweaks/msvc/2015/" &>/dev/null || exit
+	pushd "$DIR/game_info/msvc/2015/" &>/dev/null || exit
 	echo "Install MSVC"
 	chmod +x install.sh
     ./install.sh &>/dev/null
 	popd &>/dev/null || exit
 	echo "MSVC is Installed"
 fi
+}
 
-# Install GDIPLUS
-if [ "$GDIPLUS" = 1 ]; then
-	pushd "$DIR/game_info/tweaks/gdiplus/" &>/dev/null || exit
-	echo "Install GDIPLUS"
-	cp syswow64/* "$WINEPREFIX/drive_c/windows/syswow64"
-    cp system32/* "$WINEPREFIX/drive_c/windows/system32"
-    export WINEDLLOVERRIDES="$WINEDLLOVERRIDES;gdiplus=n"
-	popd &>/dev/null || exit
-	echo "GDIPLUS is Installed"
-fi
-
-# Install COREFONT
-if [ "$COREFONT" = 1 ]; then
-	echo "Install COREFONT"
-	for file in game_info/tweaks/corefont/*.exe; do
-			echo "Executing file $file"
-
-			"$WINE" start "$file" /Q &>/dev/null
-		done
-	sed -i "s@COREFONT=1@COREFONT=0@g" "$DIR/settings_$SCRIPT_NAME"
-	echo "COREFONT is Installed"
-fi
-
+launch_game (){
 # Launch the game
 cd "$GAME_PATH/$(echo "$GAME_INFO" | sed -n 5p)" || exit
 "$WINESERVER" -w
 "$WINE" $VDESKTOP "$EXE" $ARGS
 "$WINESERVER" -w
+}
 
+restore_resolution (){
 # Restore screen resolution
 if [ "$RESTORE_RESOLUTION" = 1 ]; then
 	xrandr --output "$OUTPUT" --mode "$RESOLUTION" &>/dev/null
 	xgamma -gamma 1.0 &>/dev/null
 fi
+}
+
+check_prefix (){
+if [ -d "./prefix" ]; then
+show_help "$@"
+dir_information
+wine_exec
+wine_variables
+wine_debug "$@"
+other_variables
+script_variables
+export_script_variables
+virtual_desktop
+get_resolution
+check_glib
+use_system_wine
+set_winearch
+check_pba_esync
+disable_esync
+game_variable "$@"
+check_wine_version
+change_dir
+setup_wine_prefix
+run_exe
+run_msi
+run_reg
+add_dll
+copy_additional_content
+run_sh
+run_mf
+run_msvc
+run_custom_winetricks
+enable_wine_debug
+save_last_user_information
+set_windows_version
+set_sound_driver
+enable_disable_csmt
+add_dxvk
+dxvk_overrides_disable_nvapi
+run_sh_always
+copy_content
+display_game_information
+launch_game
+restore_resolution
+else
+check_wine_archive
+show_help "$@"
+dir_information
+wine_exec
+wine_variables
+wine_debug "$@"
+other_variables
+script_variables
+export_script_variables
+virtual_desktop
+get_resolution
+make_executable
+check_glib
+use_system_wine
+set_winearch
+check_pba_esync
+disable_esync
+game_variable "$@"
+check_wine_version
+check_game_info
+check_permission
+change_dir
+setup_wine_prefix
+run_exe
+run_msi
+run_reg
+add_dll
+create_document_dir
+define_username
+configure_document
+sandbox_wine_prefix
+create_documents_multilocale
+disable_timestamp
+copy_additional_content
+run_sh
+run_mf
+run_msvc
+run_custom_winetricks
+enable_wine_debug
+save_last_user_information
+set_windows_version
+set_sound_driver
+enable_disable_csmt
+add_dxvk
+dxvk_overrides_disable_nvapi
+run_sh_always
+copy_content
+display_game_information
+launch_game
+restore_resolution
+fi
+}
+
+check_root
+check_prefix "$@"
