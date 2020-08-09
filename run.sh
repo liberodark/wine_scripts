@@ -865,7 +865,7 @@ setup_wine_prefix
 run_exe
 run_msi
 run_reg
-add_dll
+#add_dll
 copy_additional_content
 run_sh
 run_mf
