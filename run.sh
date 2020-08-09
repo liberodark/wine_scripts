@@ -777,7 +777,7 @@ echo
 run_mf (){
 # Install MF
 if [ "$MF" = 1 ]; then
-	pushd "$DIR/game_info/mf/" &>/dev/null || exit
+	pushd "$DIR/game_info/tweaks/mf/" &>/dev/null || exit
 	echo "Install MF"
 	chmod +x install-mf.sh
     ./install-mf.sh &>/dev/null
@@ -789,12 +789,39 @@ fi
 run_msvc (){
 # Install MSVC
 if [ "$MSVC" = 1 ]; then
-	pushd "$DIR/game_info/msvc/2015/" &>/dev/null || exit
+	pushd "$DIR/game_info/tweaks/msvc/2015/" &>/dev/null || exit
 	echo "Install MSVC"
 	chmod +x install.sh
     ./install.sh &>/dev/null
 	popd &>/dev/null || exit
 	echo "MSVC is Installed"
+fi
+}
+
+run_gdiplus (){
+# Install GDIPLUS
+if [ "$GDIPLUS" = 1 ]; then
+	pushd "$DIR/game_info/tweaks/gdiplus/" &>/dev/null || exit
+	echo "Install GDIPLUS"
+	cp syswow64/* "$WINEPREFIX/drive_c/windows/syswow64"
+    cp system32/* "$WINEPREFIX/drive_c/windows/system32"
+    export WINEDLLOVERRIDES="$WINEDLLOVERRIDES;gdiplus=n"
+	popd &>/dev/null || exit
+	echo "GDIPLUS is Installed"
+fi
+}
+
+run_corefont (){
+# Install COREFONT
+if [ "$COREFONT" = 1 ]; then
+	echo "Install COREFONT"
+	for file in game_info/tweaks/corefont/*.exe; do
+			echo "Executing file $file"
+
+			"$WINE" start "$file" /Q &>/dev/null
+		done
+	sed -i "s@COREFONT=1@COREFONT=0@g" "$DIR/settings_$SCRIPT_NAME"
+	echo "COREFONT is Installed"
 fi
 }
 
@@ -843,6 +870,8 @@ copy_additional_content
 run_sh
 run_mf
 run_msvc
+run_gdiplus
+run_corefont
 run_custom_winetricks
 enable_wine_debug
 save_last_user_information
@@ -894,6 +923,8 @@ copy_additional_content
 run_sh
 run_mf
 run_msvc
+run_gdiplus
+run_corefont
 run_custom_winetricks
 enable_wine_debug
 save_last_user_information
