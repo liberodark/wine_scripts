@@ -9,7 +9,7 @@
 # Google.Drive: https://drive.google.com/open?id=1fTfJQhQSzlEkY-j3g0H6p4lwmQayUNSR
 # Github: https://github.com/liberodark/wine_scripts
 
-version="1.2.9"
+version="1.3.0"
 
 echo "Welcome on Wine Portable Script $version"
 
@@ -75,30 +75,33 @@ source "$DIR/settings_$SCRIPT_NAME" &>/dev/null
 
 # Generate settings file if it's not exists or incomplete
 if [ -z "$CSMT_DISABLE" ] || [ -z "$DXVK" ] || [ -z "$USE_PULSEAUDIO" ] || [ -z "$PBA" ] || [ -z "$GLIBC_REQUIRED" ]; then
-	echo "CSMT_DISABLE=0" > "$DIR/settings_$SCRIPT_NAME"
-	echo "USE_PULSEAUDIO=0" >> "$DIR/settings_$SCRIPT_NAME"
-	echo "USE_SYSTEM_WINE=0" >> "$DIR/settings_$SCRIPT_NAME"
-	echo "RESTORE_RESOLUTION=1" >> "$DIR/settings_$SCRIPT_NAME"
-	echo "VIRTUAL_DESKTOP=0" >> "$DIR/settings_$SCRIPT_NAME"
-	echo "VIRTUAL_DESKTOP_SIZE=800x600" >> "$DIR/settings_$SCRIPT_NAME"
-	echo >> "$DIR/settings_$SCRIPT_NAME"
-	echo "DXVK=1" >> "$DIR/settings_$SCRIPT_NAME"
-	echo "DXVK_HUD=0" >> "$DIR/settings_$SCRIPT_NAME"
-	echo "ESYNC=1" >> "$DIR/settings_$SCRIPT_NAME"
-	echo "PBA=0" >> "$DIR/settings_$SCRIPT_NAME"
-	echo "MF=0" >> "$DIR/settings_$SCRIPT_NAME"
-	echo "GDIPLUS=0" >> "$DIR/settings_$SCRIPT_NAME"
-	echo "COREFONT=0" >> "$DIR/settings_$SCRIPT_NAME"
-	echo >> "$DIR/settings_$SCRIPT_NAME"
-	echo "WINDOWS_VERSION=win7" >> "$DIR/settings_$SCRIPT_NAME"
-	echo "PREFIX_ARCH=win64" >> "$DIR/settings_$SCRIPT_NAME"
-	echo >> "$DIR/settings_$SCRIPT_NAME"
-	echo "# Change these GLIBC variables only if you know what you're doing" >> "$DIR/settings_$SCRIPT_NAME"
-	echo >> "$DIR/settings_$SCRIPT_NAME"
-	echo "CHECK_GLIBC=1" >> "$DIR/settings_$SCRIPT_NAME"
-	echo "GLIBC_REQUIRED=2.23" >> "$DIR/settings_$SCRIPT_NAME"
-	echo >> "$DIR/settings_$SCRIPT_NAME"
-	echo "# You can also put custom variables in this file" >> "$DIR/settings_$SCRIPT_NAME"
+cat << EOF > "$DIR/settings_$SCRIPT_NAME"
+CSMT_DISABLE=0
+USE_PULSEAUDIO=1
+USE_SYSTEM_WINE=0
+RESTORE_RESOLUTION=1
+VIRTUAL_DESKTOP=0
+VIRTUAL_DESKTOP_SIZE=800x600
+
+DXVK=1
+DXVK_HUD=0
+ESYNC=1
+PBA=0
+MF=0
+MSVC=0
+GDIPLUS=0
+COREFONT=0
+
+WINDOWS_VERSION=win7
+PREFIX_ARCH=win64
+
+# Change these GLIBC variables only if you know what you're doing
+
+CHECK_GLIBC=1
+GLIBC_REQUIRED=2.23
+
+# You can also put custom variables in this file
+EOF
 
 	source "$DIR/settings_$SCRIPT_NAME"
 fi
@@ -290,9 +293,69 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
 
 		for file in game_info/exe/*.exe; do
 			echo "Executing file $file"
+			
+		case "$file" in
 
-			"$WINE" start "$file" &>/dev/null
+  			"game_info/exe/DXSETUP.exe")
+    		"$WINE" start "game_info/exe/DXSETUP.exe" /silent &>/dev/null
 			"$WINESERVER" -w
+			;;
+
+			"game_info/exe/vcredist_x64_2005.exe")
+    		"$WINE" start "game_info/exe/vcredist_x64_2005.exe" /q &>/dev/null
+			"$WINESERVER" -w
+    		;;
+
+			"game_info/exe/vcredist_x86_2005.exe")
+			"$WINE" start "game_info/exe/vcredist_x86_2005.exe" /q &>/dev/null
+			"$WINESERVER" -w
+    		;;
+
+  			"game_info/exe/vcredist_x64_2008.exe")
+    		"$WINE" start "game_info/exe/vcredist_x64_2008.exe" /quiet /qn /norestart &>/dev/null
+			"$WINESERVER" -w
+    		;;
+
+			"game_info/exe/vcredist_x86_2008.exe")
+			"$WINE" start "game_info/exe/vcredist_x86_2008.exe" /quiet /qn /norestart &>/dev/null
+			"$WINESERVER" -w
+    		;;
+
+  			"game_info/exe/vcredist_x64_2010.exe")
+    		"$WINE" start "game_info/exe/vcredist_x64_2010.exe" /quiet /qn /norestart &>/dev/null
+			"$WINESERVER" -w
+    		;;
+
+			"game_info/exe/vcredist_x86_2010.exe")
+			"$WINE" start "game_info/exe/vcredist_x86_2010.exe" /quiet /qn /norestart &>/dev/null
+			"$WINESERVER" -w
+    		;;
+
+			"game_info/exe/vcredist_x64_2012.exe")
+    		"$WINE" start "game_info/exe/vcredist_x64_2012.exe" /quiet /qn /norestart &>/dev/null
+			"$WINESERVER" -w
+    		;;
+
+			"game_info/exe/vcredist_x86_2012.exe")
+			"$WINE" start "game_info/exe/vcredist_x86_2012.exe" /quiet /qn /norestart &>/dev/null
+			"$WINESERVER" -w
+    		;;
+
+			"game_info/exe/vcredist_x64_2013.exe")
+    		"$WINE" start "game_info/exe/vcredist_x64_2013.exe" /quiet /qn /norestart &>/dev/null
+			"$WINESERVER" -w
+    		;;
+
+			"game_info/exe/vcredist_x86_2013.exe")
+			"$WINE" start "game_info/exe/vcredist_x86_2013.exe" /quiet /qn /norestart &>/dev/null
+			"$WINESERVER" -w
+    		;;
+
+  			*)
+    		"$WINE" start "$file" &>/dev/null
+			"$WINESERVER" -w
+    		;;
+		esac
 		done
 	fi
 
