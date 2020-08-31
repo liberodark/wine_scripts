@@ -9,7 +9,7 @@
 # Google.Drive: https://drive.google.com/open?id=1fTfJQhQSzlEkY-j3g0H6p4lwmQayUNSR
 # Github: https://github.com/liberodark/wine_scripts
 
-version="1.3.0"
+version="1.3.1"
 
 echo "Welcome on Wine Portable Script $version"
 
