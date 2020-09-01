@@ -296,39 +296,39 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
 			
 		case "$file" in
 
-  			"game_info/exe/DXSETUP.exe")
+  		"game_info/exe/DXSETUP.exe" | "game_info/exe/dxsetup.exe")
     		"$WINE" start "$file" /silent &>/dev/null
-			"$WINESERVER" -w
-			;;
+		"$WINESERVER" -w
+		;;
 
-			"game_info/exe/vcredist_x64_2005.exe" | "game_info/exe/vcredist_x86_2005.exe")
+		"game_info/exe/vcredist_x64_2005.exe" | "game_info/exe/vcredist_x86_2005.exe")
     		"$WINE" start "$file" /q &>/dev/null
-			"$WINESERVER" -w
+		"$WINESERVER" -w
     		;;
 
-  			"game_info/exe/vcredist_x64_2008.exe" | "game_info/exe/vcredist_x86_2008.exe")
+  		"game_info/exe/vcredist_x64_2008.exe" | "game_info/exe/vcredist_x86_2008.exe")
     		"$WINE" start "$file" /quiet /qn /norestart &>/dev/null
-			"$WINESERVER" -w
+		"$WINESERVER" -w
     		;;
 
-  			"game_info/exe/vcredist_x64_2010.exe" | "game_info/exe/vcredist_x86_2010.exe")
+  		"game_info/exe/vcredist_x64_2010.exe" | "game_info/exe/vcredist_x86_2010.exe")
     		"$WINE" start "$file" /quiet /qn /norestart &>/dev/null
-			"$WINESERVER" -w
+		"$WINESERVER" -w
     		;;
 
-			"game_info/exe/vcredist_x64_2012.exe" | "game_info/exe/vcredist_x86_2012.exe")
+		"game_info/exe/vcredist_x64_2012.exe" | "game_info/exe/vcredist_x86_2012.exe")
     		"$WINE" start "$file" /quiet /qn /norestart &>/dev/null
-			"$WINESERVER" -w
+		"$WINESERVER" -w
     		;;
 
-			"game_info/exe/vcredist_x64_2013.exe" | "game_info/exe/vcredist_x86_2013.exe")
+		"game_info/exe/vcredist_x64_2013.exe" | "game_info/exe/vcredist_x86_2013.exe")
     		"$WINE" start "$file" /quiet /qn /norestart &>/dev/null
-			"$WINESERVER" -w
+		"$WINESERVER" -w
     		;;
 
-  			*)
+  		*)
     		"$WINE" start "$file" &>/dev/null
-			"$WINESERVER" -w
+		"$WINESERVER" -w
     		;;
 		esac
 		done
