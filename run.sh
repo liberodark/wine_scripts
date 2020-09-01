@@ -326,6 +326,16 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
 			"$WINESERVER" -w
     		;;
 		
+		"game_info/exe/vcredist_x64_2015.exe" | "game_info/exe/vcredist_x86_2015.exe")
+    		"$WINE" start "$file" /quiet /qn /norestart &>/dev/null
+			"$WINESERVER" -w
+    		;;
+
+		"game_info/exe/vcredist_x64_2019.exe" | "game_info/exe/vcredist_x86_2019.exe")
+    		"$WINE" start "$file" /quiet /qn /norestart &>/dev/null
+			"$WINESERVER" -w
+    		;;
+		
 		"game_info/exe/vcredist_x64_2015_2019.exe" | "game_info/exe/vcredist_x86_2015_2019.exe")
     		"$WINE" start "$file" /quiet /qn /norestart &>/dev/null
 			"$WINESERVER" -w
