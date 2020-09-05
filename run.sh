@@ -345,6 +345,11 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
     		"$WINE" start "$file" /quiet /qn /norestart &>/dev/null
 			"$WINESERVER" -w
     		;;
+		
+		"game_info/exe/oalinst.exe")
+    		"$WINE" start "$file" /s &>/dev/null
+			"$WINESERVER" -w
+    		;;
 
   		*)
     		"$WINE" start "$file" &>/dev/null
