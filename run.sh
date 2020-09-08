@@ -203,7 +203,7 @@ else NO_ESYNC_FOUND=0; fi
 
 # Disable ESYNC if ulimit fails
 ESYNC_FORCE_OFF=0
-if [ $NO_ESYNC_FOUND = 0 ] && [ "$WINEESYNC" = 1 ]; then
+if [ "$NO_ESYNC_FOUND" = 0 ] && [ "$WINEESYNC" = 1 ]; then
 	if ! ulimit -n 500000 &>/dev/null; then
 		export WINEESYNC=0
 		ESYNC_FORCE_OFF=1
@@ -398,13 +398,13 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
 			ln -sfr "$x" "$WINEPREFIX/drive_c/windows/system32"
 
 			# Do not override component if required
-			echo -e '"'$(basename "$x" .dll)'"="native"' >> dlloverrides.reg
+			echo -e '"'$(basename $x .dll)'"="native"' >> dlloverrides.reg
 
 			# Register component with regsvr32
-			echo "Registering $(basename "$x")"
+			echo "Registering $(basename $x)"
 
-			"$WINE" regsvr32 "$(basename "$x")" &>/dev/null
-			"$WINE64" regsvr32 "$(basename "$x")" &>/dev/null
+			"$WINE" regsvr32 "$(basename $x)" &>/dev/null
+			"$WINE64" regsvr32 "$(basename $x)" &>/dev/null
 		done
 
 		echo "Overriding dlls"
@@ -506,7 +506,6 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
 			echo "Executing winetricks actions, please wait."
 
 			"$WINESERVER" -w
-			# shellcheck disable=SC2046
 			"$DIR/winetricks" $(cat game_info/winetricks_list.txt) &>/dev/null
 			"$WINESERVER" -w
 		else
@@ -563,7 +562,7 @@ if [ ! -f .temp_files/lastwin ] || [ "$WINDOWS_VERSION" != "$(cat .temp_files/la
 
 		echo -e "Windows Registry Editor Version 5.00\n" > "$WINEPREFIX/drive_c/setwinver.reg"
 		echo -e "[HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows NT\\CurrentVersion]" >> "$WINEPREFIX/drive_c/setwinver.reg"
-		echo -e '"CSDVersion"="'"$csdversion"'"' >> "$WINEPREFIX/drive_c/setwinver.reg"
+		echo -e '"CSDVersion"="'$csdversion'"' >> "$WINEPREFIX/drive_c/setwinver.reg"
 		echo -e '"CurrentBuildNumber"="'$currentbuildnumber'"' >> "$WINEPREFIX/drive_c/setwinver.reg"
 		echo -e '"CurrentVersion"="'$currentversion'"' >> "$WINEPREFIX/drive_c/setwinver.reg"
 
@@ -719,13 +718,13 @@ if [ $USE_SYSTEM_WINE = 1 ]; then
 	if [ -n "$OLD_GLIBC" ]; then echo -ne " (old GLIBC)"; fi
 fi
 
-echo -ne "\nArch: x$(echo "$WINEARCH" | tail -c 3)"
+echo -ne "\nArch: x$(echo $WINEARCH | tail -c 3)"
 
 if [ ! -f "$DIR/game_info/dlls/x64/dxgi.dll" ] || [ "$DXVK" = 0 ]; then
 	if [ "$CSMT_DISABLE" = 1 ]; then echo -ne "\nCSMT: disabled"
 	else echo -ne "\nCSMT: enabled"; fi
 
-	if [ $NO_PBA_FOUND = 0 ]; then
+	if [ "$NO_PBA_FOUND" = 0 ]; then
 		if [ "$PBA_ENABLE" = 0 ]; then echo -ne "\nPBA: disabled"
 		else echo -ne "\nPBA: enabled"; fi
 	fi
