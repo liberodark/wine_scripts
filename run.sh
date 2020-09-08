@@ -506,6 +506,7 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
 			echo "Executing winetricks actions, please wait."
 
 			"$WINESERVER" -w
+			# shellcheck disable=SC2046
 			"$DIR/winetricks" $(cat game_info/winetricks_list.txt) &>/dev/null
 			"$WINESERVER" -w
 		else
