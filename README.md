@@ -11,7 +11,7 @@ shell installed.
 All script settings (variables) are in the settings_run file.
 
 To change prefix architecture to 32-bit change PREFIX_ARCH variable
-to win32 in settings_SCRIPTNAME file.
+to win32 in settings_run file.
 
 Script can be launched with --debug parameter to enable more output. This
 helps in finding problems when application not working.
