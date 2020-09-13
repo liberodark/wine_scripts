@@ -748,7 +748,7 @@ if [ "$GAMEMODE" = 1 ]; then
 	if [ ! "$GAMEMODE_RUN" ] > /dev/null 2>&1; then echo -ne "\nError GameMode is not installed\n"
 	exit
 	else echo -ne "\nGAMEMODE: enabled"; fi
-
+	else
 	if [ "$GAMEMODE" = 0 ]; then echo -ne "\nGAMEMODE: disabled"; fi
 fi
 
