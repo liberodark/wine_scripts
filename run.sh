@@ -745,9 +745,9 @@ if [ $NO_ESYNC_FOUND = 0 ]; then
 fi
 
 if [ "$GAMEMODE" = 1 ]; then
-	echo -ne "\nGAMEMODE: enabled"
-	else 
-	echo -ne "\nGAMEMODE: disabled"
+	if [ ! "$GAMEMODE_RUN" ] > /dev/null 2>&1; then echo -ne "\nError GameMode is not installed\n"
+	exit
+	else echo -ne "\nGAMEMODE: enabled"; fi
 fi
 
 echo -ne "\n\n======================================================="
