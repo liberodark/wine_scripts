@@ -63,11 +63,11 @@ if [ "$1" = "--debug" ]; then export WINEDEBUG="err+all,fixme-all"; fi
 
 ## Other variables
 
-export GAMEMODE_RUN="$(command -v gamemoderun)"
 export XDG_CACHE_HOME="$DIR/cache"
 export DXVK_LOG_PATH="$DIR/cache/dxvk"
 export DXVK_STATE_CACHE_PATH="$DIR/cache/dxvk"
 
+GAMEMODE_RUN="$(command -v gamemoderun)"
 USERNAME="$(id -un)"
 
 ## Script variables
