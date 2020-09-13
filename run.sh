@@ -9,7 +9,7 @@
 # Google.Drive: https://drive.google.com/open?id=1fTfJQhQSzlEkY-j3g0H6p4lwmQayUNSR
 # Github: https://github.com/liberodark/wine_scripts
 
-version="1.3.2"
+version="1.3.1"
 
 echo "Welcome on Wine Portable Script $version"
 
@@ -36,7 +36,6 @@ if [ "$1" == "--help" ]; then
 fi
 
 ### Set variables
-GAMEMODE_RUN="$(command -v gamemoderun)"
 
 ## Script directory
 
@@ -745,6 +744,12 @@ if [ $NO_ESYNC_FOUND = 0 ]; then
 	if [ $ESYNC_FORCE_OFF = 1 ]; then echo -ne " (disabled; ulimit failed)"; fi
 fi
 
+if [ "$GAMEMODE" = 1 ]; then
+	echo -ne "\nGAMEMODE: enabled"
+	else 
+	echo -ne "\nGAMEMODE: disabled"
+fi
+
 echo -ne "\n\n======================================================="
 
 if [ $NO_ESYNC_FOUND = 0 ] && [ $ESYNC_FORCE_OFF = 1 ]; then
@@ -812,13 +817,11 @@ fi
 cd "$GAME_PATH/$(echo "$GAME_INFO" | sed -n 5p)" || exit
 "$WINESERVER" -w
 if [ "$GAMEMODE" = 1 ]; then
-	echo "Run with Gamemode"
 	# shellcheck disable=SC2086
 	"$GAMEMODE_RUN" "$WINE" $VDESKTOP "$EXE" $ARGS
 	"$WINESERVER" -w
 
 elif [ "$GAMEMODE" = 0 ]; then
-	echo "Run without Gamemode"
 	# shellcheck disable=SC2086
 	"$WINE" $VDESKTOP "$EXE" $ARGS
 	"$WINESERVER" -w
