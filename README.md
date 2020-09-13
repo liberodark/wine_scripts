@@ -8,8 +8,7 @@ shell installed.
 
 ## start.sh script description
 
-All script settings (variables) are in the settings_start file or in the
-settings_SCRIPTNAME file.
+All script settings (variables) are in the settings_run file.
 
 To change prefix architecture to 32-bit change PREFIX_ARCH variable
 to win32 in settings_SCRIPTNAME file.
