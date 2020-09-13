@@ -9,7 +9,7 @@
 # Google.Drive: https://drive.google.com/open?id=1fTfJQhQSzlEkY-j3g0H6p4lwmQayUNSR
 # Github: https://github.com/liberodark/wine_scripts
 
-version="1.3.1"
+version="1.3.2"
 
 echo "Welcome on Wine Portable Script $version"
 
@@ -36,6 +36,7 @@ if [ "$1" == "--help" ]; then
 fi
 
 ### Set variables
+GAMEMODE_RUN="$(command -v gamemoderun)"
 
 ## Script directory
 
@@ -62,6 +63,7 @@ if [ "$1" = "--debug" ]; then export WINEDEBUG="err+all,fixme-all"; fi
 
 ## Other variables
 
+export GAMEMODE_RUN="$(command -v gamemoderun)"
 export XDG_CACHE_HOME="$DIR/cache"
 export DXVK_LOG_PATH="$DIR/cache/dxvk"
 export DXVK_STATE_CACHE_PATH="$DIR/cache/dxvk"
@@ -89,6 +91,7 @@ DXVK=1
 DXVK_HUD=0
 ESYNC=1
 PBA=0
+GAMEMODE=0
 MF=0
 MSVC=0
 GDIPLUS=0
@@ -808,9 +811,18 @@ fi
 # Launch the game
 cd "$GAME_PATH/$(echo "$GAME_INFO" | sed -n 5p)" || exit
 "$WINESERVER" -w
-# shellcheck disable=SC2086
-"$WINE" $VDESKTOP "$EXE" $ARGS
-"$WINESERVER" -w
+if [ "$GAMEMODE" = 1 ]; then
+	echo "Run with Gamemode"
+	# shellcheck disable=SC2086
+	"$GAMEMODE_RUN" "$WINE" $VDESKTOP "$EXE" $ARGS
+	"$WINESERVER" -w
+
+elif [ "$GAMEMODE" = 0 ]; then
+	echo "Run without Gamemode"
+	# shellcheck disable=SC2086
+	"$WINE" $VDESKTOP "$EXE" $ARGS
+	"$WINESERVER" -w
+fi
 
 # Restore screen resolution
 if [ "$RESTORE_RESOLUTION" = 1 ]; then
