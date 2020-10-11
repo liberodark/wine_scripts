@@ -9,7 +9,7 @@
 # Google.Drive: https://drive.google.com/open?id=1fTfJQhQSzlEkY-j3g0H6p4lwmQayUNSR
 # Github: https://github.com/liberodark/wine_scripts
 
-version="1.3.2"
+version="1.3.3"
 
 echo "Welcome on Wine Portable Script $version"
 
@@ -640,35 +640,11 @@ if [ "$DXVK" = 1 ]; then
 	if [ ! -f "$DIR/game_info/dlls/x64/dxgi.dll" ] && grep dxvk "$WINEPREFIX/winetricks.log" &>/dev/null; then
 		mkdir -p "$DIR/game_info/dlls"
 
-			cp "$WINEPREFIX/drive_c/windows/system32/d3d11.dll" "$DIR/game_info/dlls/x64"
-        	cp "$WINEPREFIX/drive_c/windows/system32/d3d10core.dll" "$DIR/game_info/dlls/x64"
-        	cp "$WINEPREFIX/drive_c/windows/system32/d3d10.dll" "$DIR/game_info/dlls/x64"
-        	cp "$WINEPREFIX/drive_c/windows/system32/d3d10_1.dll" "$DIR/game_info/dlls/x64"
-			cp "$WINEPREFIX/drive_c/windows/system32/d3d9.dll" "$DIR/game_info/dlls/x64"
-        	cp "$WINEPREFIX/drive_c/windows/system32/dxgi.dll" "$DIR/game_info/dlls/x64"
-
-        	cp "$WINEPREFIX/drive_c/windows/syswow64/d3d11.dll" "$DIR/game_info/dlls/x32"
-        	cp "$WINEPREFIX/drive_c/windows/syswow64/d3d10core.dll" "$DIR/game_info/dlls/x32"
-        	cp "$WINEPREFIX/drive_c/windows/syswow64/d3d10.dll" "$DIR/game_info/dlls/x32"
-        	cp "$WINEPREFIX/drive_c/windows/syswow64/d3d10_1.dll" "$DIR/game_info/dlls/x32"
-			cp "$WINEPREFIX/drive_c/windows/syswow64/d3d9.dll" "$DIR/game_info/dlls/x32"
-        	cp "$WINEPREFIX/drive_c/windows/syswow64/dxgi.dll" "$DIR/game_info/dlls/x32"
-
-	else
-
-		cp "$DIR/game_info/dlls/x64/d3d11.dll" "$WINEPREFIX/drive_c/windows/system32"
-		cp "$DIR/game_info/dlls/x64/d3d10core.dll" "$WINEPREFIX/drive_c/windows/system32"
-		cp "$DIR/game_info/dlls/x64/d3d10.dll" "$WINEPREFIX/drive_c/windows/system32"
-		cp "$DIR/game_info/dlls/x64/d3d10_1.dll" "$WINEPREFIX/drive_c/windows/system32"
-		cp "$DIR/game_info/dlls/x64/d3d9.dll" "$WINEPREFIX/drive_c/windows/system32"
-		cp "$DIR/game_info/dlls/x64/dxgi.dll" "$WINEPREFIX/drive_c/windows/system32"
-
-		cp "$DIR/game_info/dlls/x32/d3d11.dll" "$WINEPREFIX/drive_c/windows/syswow64"
-		cp "$DIR/game_info/dlls/x32/d3d10core.dll" "$WINEPREFIX/drive_c/windows/syswow64"
-		cp "$DIR/game_info/dlls/x32/d3d10.dll" "$WINEPREFIX/drive_c/windows/syswow64"
-		cp "$DIR/game_info/dlls/x32/d3d10_1.dll" "$WINEPREFIX/drive_c/windows/syswow64"
-		cp "$DIR/game_info/dlls/x32/d3d9.dll" "$WINEPREFIX/drive_c/windows/syswow64"
-		cp "$DIR/game_info/dlls/x32/dxgi.dll" "$WINEPREFIX/drive_c/windows/syswow64"
+            cp "$WINEPREFIX/drive_c/windows/system32/"{d3d11.dll,d3d10core.dll,d3d10.dll,d3d10_1.dll,d3d9.dll,dxgi.dll} "$DIR/game_info/dlls/x64"
+            cp "$WINEPREFIX/drive_c/windows/syswow64/"{d3d11.dll,d3d10core.dll,d3d10.dll,d3d10_1.dll,d3d9.dll,dxgi.dll} "$DIR/game_info/dlls/x32"
+    else
+            cp "$DIR/game_info/dlls/x64/"{d3d11.dll,d3d10core.dll,d3d10.dll,d3d10_1.dll,d3d9.dll,dxgi.dll} "$WINEPREFIX/drive_c/windows/system32"
+            cp "$DIR/game_info/dlls/x32/"{d3d11.dll,d3d10core.dll,d3d10.dll,d3d10_1.dll,d3d9.dll,dxgi.dll} "$WINEPREFIX/drive_c/windows/syswow64"
 	fi
 fi
 
