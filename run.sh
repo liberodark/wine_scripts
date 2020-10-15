@@ -445,7 +445,7 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
 		mkdir -p Documents_Multilocale
 
 		echo "Documents_Multilocale directory is for compatibility with different languages." > Documents_Multilocale/readme.txt
-		echo "Put all files into Documents_Multilocale instead of specific directories like My Documents, Мои документы etc." >> Documents_Multilocale/readme.txt
+		echo "Put all files into Documents_Multilocale instead of specific directories like My Documents etc." >> Documents_Multilocale/readme.txt
 
 		if [ "$USERNAME" != "steamuser" ]; then
 			for x in *; do
@@ -456,7 +456,6 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
 			done
 		else
 			[ -d "My Documents" ] && rm -rf "My Documents" && ln -sfr Documents_Multilocale "My Documents"
-			[ -d "Мои документы" ] && rm -rf "Мои документы" && ln -sfr Documents_Multilocale "Мои документы"
 		fi
 
 		cd "$DIR" || exit
