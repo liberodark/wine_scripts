@@ -639,18 +639,18 @@ if [ "$DXVK" = 1 ]; then
 	if [ ! -f "$DIR/game_info/dlls/x64/dxgi.dll" ] && grep dxvk "$WINEPREFIX/winetricks.log" &>/dev/null; then
 		mkdir -p "$DIR/game_info/dlls"
 
-            cp "$WINEPREFIX/drive_c/windows/system32/"{d3d11.dll,d3d10core.dll,d3d10.dll,d3d10_1.dll,d3d9.dll,dxgi.dll} "$DIR/game_info/dlls/x64"
-            cp "$WINEPREFIX/drive_c/windows/syswow64/"{d3d11.dll,d3d10core.dll,d3d10.dll,d3d10_1.dll,d3d9.dll,dxgi.dll} "$DIR/game_info/dlls/x32"
+            cp "$WINEPREFIX/drive_c/windows/system32/"{d3d12.dll,d3d11.dll,d3d10core.dll,d3d10.dll,d3d10_1.dll,d3d9.dll,dxgi.dll} "$DIR/game_info/dlls/x64"
+            cp "$WINEPREFIX/drive_c/windows/syswow64/"{d3d12.dll,d3d11.dll,d3d10core.dll,d3d10.dll,d3d10_1.dll,d3d9.dll,dxgi.dll} "$DIR/game_info/dlls/x32"
     else
-            cp "$DIR/game_info/dlls/x64/"{d3d11.dll,d3d10core.dll,d3d10.dll,d3d10_1.dll,d3d9.dll,dxgi.dll} "$WINEPREFIX/drive_c/windows/system32"
-            cp "$DIR/game_info/dlls/x32/"{d3d11.dll,d3d10core.dll,d3d10.dll,d3d10_1.dll,d3d9.dll,dxgi.dll} "$WINEPREFIX/drive_c/windows/syswow64"
+            cp "$DIR/game_info/dlls/x64/"{d3d12.dll,d3d11.dll,d3d10core.dll,d3d10.dll,d3d10_1.dll,d3d9.dll,dxgi.dll} "$WINEPREFIX/drive_c/windows/system32"
+            cp "$DIR/game_info/dlls/x32/"{d3d12.dll,d3d11.dll,d3d10core.dll,d3d10.dll,d3d10_1.dll,d3d9.dll,dxgi.dll} "$WINEPREFIX/drive_c/windows/syswow64"
 	fi
 fi
 
 if [ "$DXVK" = 0 ]; then
-    export WINEDLLOVERRIDES="$WINEDLLOVERRIDES;dxgi,d3d9,d3d10,d3d10_1,d3d10core,d3d11=b"
+    export WINEDLLOVERRIDES="$WINEDLLOVERRIDES;dxgi,d3d9,d3d10,d3d10_1,d3d10core,d3d11,d3d12=b"
 elif [ "$DXVK" = 1 ] && [ -f "$DIR/game_info/dlls/x64/dxgi.dll" ]; then
-    export WINEDLLOVERRIDES="$WINEDLLOVERRIDES;dxgi,d3d9,d3d10,d3d10_1,d3d10core,d3d11=n;nvapi64,nvapi="
+    export WINEDLLOVERRIDES="$WINEDLLOVERRIDES;dxgi,d3d9,d3d10,d3d10_1,d3d10core,d3d11,d3d12=n;nvapi64,nvapi="
 
 	if [ ! -d "$DIR/cache/dxvk" ]; then
 		mkdir -p "$DIR/cache/dxvk"
