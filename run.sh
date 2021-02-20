@@ -87,7 +87,6 @@ VIRTUAL_DESKTOP=0
 VIRTUAL_DESKTOP_SIZE=800x600
 
 DXVK=1
-DXVK_ASYNC=0
 DXVK_HUD=0
 ESYNC=1
 FSYNC=1
@@ -651,8 +650,10 @@ if [ "$DXVK" = 1 ]; then
 fi
 
 if [ "$DXVK" = 0 ]; then
+    export DXVK_ASYNC=0
     export WINEDLLOVERRIDES="$WINEDLLOVERRIDES;dxgi,d3d9,d3d10,d3d10_1,d3d10core,d3d11,d3d12=b"
 elif [ "$DXVK" = 1 ] && [ -f "$DIR/game_info/dlls/x64/dxgi.dll" ]; then
+    export DXVK_ASYNC=1
     export WINEDLLOVERRIDES="$WINEDLLOVERRIDES;dxgi,d3d9,d3d10,d3d10_1,d3d10core,d3d11,d3d12=n;nvapi64,nvapi="
 
 	if [ ! -d "$DIR/cache/dxvk" ]; then
