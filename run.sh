@@ -9,7 +9,7 @@
 # Google.Drive: https://drive.google.com/open?id=1fTfJQhQSzlEkY-j3g0H6p4lwmQayUNSR
 # Github: https://github.com/liberodark/wine_scripts
 
-version="1.3.5"
+version="1.3.6"
 
 echo "Welcome on Wine Portable Script $version"
 
@@ -88,6 +88,7 @@ VIRTUAL_DESKTOP_SIZE=800x600
 
 DXVK=1
 DXVK_HUD=0
+DXVK_FRAME_RATE=0
 ESYNC=1
 FSYNC=1
 PBA=0
@@ -112,6 +113,7 @@ EOF
 fi
 
 export DXVK_HUD
+export DXVK_FRAME_RATE
 export WINEESYNC=$ESYNC
 export WINEFSYNC=$FSYNC
 export PBA_ENABLE=$PBA
