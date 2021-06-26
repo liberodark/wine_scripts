@@ -5,6 +5,7 @@
 # Thanks : 
 # License: GNU GPLv3
 ### Link to latest version:
+# Mega: https://mega.nz/folder/ZZUV1K7J#kIenmTQoi0if-SAcMSuAHA
 # Github: https://github.com/liberodark/wine_scripts
 
 version="1.3.6"
