@@ -5,8 +5,6 @@
 # Thanks : 
 # License: GNU GPLv3
 ### Link to latest version:
-# Yandex.Disk: https://yadi.sk/d/IrofgqFSqHsPu
-# Google.Drive: https://drive.google.com/open?id=1fTfJQhQSzlEkY-j3g0H6p4lwmQayUNSR
 # Github: https://github.com/liberodark/wine_scripts
 
 version="1.3.6"
