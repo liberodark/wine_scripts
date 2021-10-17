@@ -8,7 +8,7 @@
 # Mega: https://mega.nz/folder/ZZUV1K7J#kIenmTQoi0if-SAcMSuAHA
 # Github: https://github.com/liberodark/wine_scripts
 
-version="1.3.6"
+version="1.3.7"
 
 echo "Welcome on Wine Portable Script $version"
 
@@ -91,6 +91,7 @@ DXVK_FRAME_RATE=0
 ESYNC=1
 FSYNC=1
 PBA=0
+FSR=0
 GAMEMODE=0
 MF=0
 MSVC=0
@@ -116,6 +117,7 @@ export DXVK_FRAME_RATE
 export WINEESYNC=$ESYNC
 export WINEFSYNC=$FSYNC
 export PBA_ENABLE=$PBA
+export WINE_FULLSCREEN_FSR=$FSR
 export WINEARCH=$PREFIX_ARCH
 
 # Enable virtual desktop if VIRTUAL_DESKTOP env is set to 1
