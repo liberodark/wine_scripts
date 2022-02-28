@@ -726,9 +726,16 @@ if [ $NO_ESYNC_FOUND = 0 ]; then
 	if [ $ESYNC_FORCE_OFF = 1 ]; then echo -ne " (disabled; ulimit failed)"; fi
 fi
 
-if [ "$FSR" = 0 ]; then
-	if [ "$FSR" = 1 ]; then echo -ne "\FSR: enabled"
-	else echo -ne "\nFSR: disabled"; fi
+if [ "$ESYNC" = 1 ]; then
+	echo -ne "\nESYNC: enabled"
+fi
+
+if [ "$FSYNC" = 1 ]; then
+	echo -ne "\nFSYNC: enabled"
+fi
+
+if [ "$FSR" = 1 ]; then
+	echo -ne "\nFSR: enabled"
 fi
 
 if [ "$GAMEMODE" = 1 ]; then
