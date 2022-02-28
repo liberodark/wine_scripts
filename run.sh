@@ -726,6 +726,11 @@ if [ $NO_ESYNC_FOUND = 0 ]; then
 	if [ $ESYNC_FORCE_OFF = 1 ]; then echo -ne " (disabled; ulimit failed)"; fi
 fi
 
+if [ "$FSR" = 0 ]; then
+	if [ "$FSR" = 1 ]; then echo -ne "\FSR: enabled"
+	else echo -ne "\nFSR: disabled"; fi
+fi
+
 if [ "$GAMEMODE" = 1 ]; then
 	if [ ! "$GAMEMODE_RUN" ] > /dev/null 2>&1; then echo -ne "\nError GameMode is not installed\n"
 	exit
