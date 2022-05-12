@@ -8,7 +8,7 @@
 # Mega: https://mega.nz/folder/ZZUV1K7J#kIenmTQoi0if-SAcMSuAHA
 # Github: https://github.com/liberodark/wine_scripts
 
-version="1.3.7"
+version="1.3.8"
 
 echo "Welcome on Wine Portable Script $version"
 
@@ -351,6 +351,11 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
     		;;
 
 		"game_info/exe/vcredist_x64_2015_2019.exe" | "game_info/exe/vcredist_x86_2015_2019.exe")
+    		"$WINE" start "$file" /quiet /qn /norestart &>/dev/null
+			"$WINESERVER" -w
+    		;;
+
+		"game_info/exe/vcredist_x64_2015_2022.exe" | "game_info/exe/vcredist_x86_2015_2022.exe")
     		"$WINE" start "$file" /quiet /qn /norestart &>/dev/null
 			"$WINESERVER" -w
     		;;
