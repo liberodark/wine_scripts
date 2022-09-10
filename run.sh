@@ -8,7 +8,7 @@
 # Mega: https://mega.nz/folder/ZZUV1K7J#kIenmTQoi0if-SAcMSuAHA
 # Github: https://github.com/liberodark/wine_scripts
 
-version="1.3.8"
+version="1.3.9"
 
 echo "Welcome on Wine Portable Script $version"
 
@@ -97,6 +97,7 @@ MF=0
 MSVC=0
 GDIPLUS=0
 COREFONT=0
+NO_OPWR=0
 
 WINDOWS_VERSION=win7
 PREFIX_ARCH=win64
@@ -116,6 +117,7 @@ export DXVK_HUD
 export DXVK_FRAME_RATE
 export WINEESYNC=$ESYNC
 export WINEFSYNC=$FSYNC
+export WINE_DISABLE_VULKAN_OPWR=$NO_OPWR
 export PBA_ENABLE=$PBA
 export WINE_FULLSCREEN_FSR=$FSR
 export WINEARCH=$PREFIX_ARCH
