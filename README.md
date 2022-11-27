@@ -123,7 +123,6 @@ prefix creation.
 
 ## regs directory
 
-
 Put registry files here.
 
 Script will automatically import all reg files from this directory during
@@ -135,6 +134,13 @@ Put custom shell scripts here.
 
 Script will automatically execute all scripts from this directory
 during prefix creation.
+
+## fonts directory
+
+Put custom fonts here.
+
+Script will automatically import all fonts files from this directory during
+prefix creation.
 
 ## sh/everytime directory
 
