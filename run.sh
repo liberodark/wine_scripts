@@ -8,7 +8,7 @@
 # Mega: https://mega.nz/folder/ZZUV1K7J#kIenmTQoi0if-SAcMSuAHA
 # Github: https://github.com/liberodark/wine_scripts
 
-version="1.4.0"
+version="1.4.1"
 
 echo "Welcome on Wine Portable Script $version"
 
@@ -498,6 +498,12 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
 		done
 	fi
 
+	# Install Fonts
+	if [ -d game_info/fonts ]; then
+		echo "Install fonts"
+		cp game_info/fonts/* "$WINEPREFIX/drive_c/windows/Fonts"
+	fi
+
 	# Execute custom winetricks actions
 	if [ -f game_info/winetricks_list.txt ]; then
 		if [ ! -f "$DIR/winetricks" ]; then
@@ -676,7 +682,6 @@ elif [ "$DXVK" = 1 ] && [ -f "$DIR/game_info/dlls/x64/dxgi.dll" ]; then
 fi
 
 ## Execute custom scripts
-
 if [ -d game_info/sh/everytime ]; then
 	echo "Executing scripts"
 
