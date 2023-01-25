@@ -8,7 +8,7 @@
 # Mega: https://mega.nz/folder/ZZUV1K7J#kIenmTQoi0if-SAcMSuAHA
 # Github: https://github.com/liberodark/wine_scripts
 
-version="1.4.1"
+version="1.4.2"
 
 echo "Welcome on Wine Portable Script $version"
 
@@ -87,6 +87,7 @@ VIRTUAL_DESKTOP_SIZE=800x600
 
 DXVK=1
 DXVK_HUD=0
+DXVK_HDR=0
 DXVK_FRAME_RATE=0
 ESYNC=1
 FSYNC=1
@@ -114,6 +115,7 @@ EOF
 fi
 
 export DXVK_HUD
+export DXVK_HDR
 export DXVK_FRAME_RATE
 export WINEESYNC=$ESYNC
 export WINEFSYNC=$FSYNC
