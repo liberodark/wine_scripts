@@ -1,18 +1,22 @@
-#!/bin/sh
+#!/bin/bash
+
+## Wine executables
+WINE="${DIR}/wine/bin/wine"
+WINE64="${DIR}/wine/bin/wine64"
 
 [ -z "$WINEPREFIX" ] && echo "WINEPREFIX not set" && exit 1
 
 set -e
 
 overrideDll() {
-  wine reg add "HKEY_CURRENT_USER\Software\Wine\DllOverrides" /v $1 /d native /f
+  "${WINE}" reg add "HKEY_CURRENT_USER\Software\Wine\DllOverrides" /v $1 /d native /f
 }
 
 scriptdir=$(dirname "$0")
 cd "$scriptdir"
 
-cp -v syswow64/* "$WINEPREFIX/drive_c/windows/syswow64"
-cp -v system32/* "$WINEPREFIX/drive_c/windows/system32"
+cp -vf --remove-destination syswow64/* "$WINEPREFIX/drive_c/windows/syswow64"
+cp -vf --remove-destination system32/* "$WINEPREFIX/drive_c/windows/system32"
 
 overrideDll "mfc140"
 overrideDll "mfc140chs"
