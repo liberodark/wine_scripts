@@ -1,26 +1,21 @@
+# October 2021 Notice
+For many games this script is not needed anymore, and may soon not be needed at all.
+
+I would reccommend trying games with latest Proton Experimental, Proton-GE, or Proton-tkg first, and only using this as a backup. mf-install may not work with newer Proton versions that implement Valve's ongoing attempt to remotely transcode videos to free formats on their servers.
+
 # mf-install
-Media Foundation workaround for Wine
+Easily add Media Foundation support to a Wine prefix. Just set WINEPREFIX to a valid Wine prefix and run.
 
-Easily add Media Foundation support to a Wine prefix. Just set WINEPREFIX and run.
+Example usage:
 
-Usage:
+`WINEPREFIX="/home/user/wine prefixes can be anywhere/folder" ./mf-install.sh`
 
-`WINEPREFIX="/home/gaben/.local/share/Steam/steamapps/compatdata/751440/pfx" ./install-mf.sh`
+Steam stores Proton Wine prefixes as `<STEAM FOLDER>/steamapps/compatdata/<GAME ID>/pfx`
 
-### Known working games:
+# Optional: Using Proton instead of system's Wine
+Set the PROTON env variable a Proton folder, and pass -proton to the script. Example:
 
-- Monster Hunter World
-- Blaz Blue Central Fiction
-- GRIS
-- Breathedge
-- FINAL FANTASY TYPE-0 HD
-- Car Mechanic Simulator 2018
-- PC Building Simulator
-- American Fugitive
-- Dauntless
-- Danganronpa V3: Killing Harmony
-- Blasphemous
-- Devotion
+`WINEPREFIX="/steam folder/steamapps/compatdata/111111/pfx" PROTON="/steam folder/steamapps/common/Proton 5.0" ./mf-install.sh -proton`
 
-### Resident Evil 2 and others that don't:
-See this repository for an installcab based Media Foundation workaround that works with Resident Evil 2 https://github.com/z0z0z/mf-installcab
+# Known issues
+For CPUs with more than 8 physical cores, see: https://github.com/z0z0z/mf-install/issues/44
