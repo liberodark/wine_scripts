@@ -8,7 +8,7 @@
 # Mega: https://mega.nz/folder/ZZUV1K7J#kIenmTQoi0if-SAcMSuAHA
 # Github: https://github.com/liberodark/wine_scripts
 
-version="1.4.3"
+version="1.4.4"
 
 echo "Welcome on Wine Portable Script $version"
 
@@ -100,6 +100,7 @@ MSVC=0
 GDIPLUS=0
 COREFONT=0
 NO_OPWR=0
+LARGE_ADDRESS_AWARE=0
 
 WINDOWS_VERSION=win7
 PREFIX_ARCH=win64
@@ -125,6 +126,7 @@ export WINE_DISABLE_VULKAN_OPWR=$NO_OPWR
 export PBA_ENABLE=$PBA
 export WINE_FULLSCREEN_FSR=$FSR
 export WINEARCH=$PREFIX_ARCH
+export WINE_LARGE_ADDRESS_AWARE=$LARGE_ADDRESS_AWARE
 
 # Enable virtual desktop if VIRTUAL_DESKTOP env is set to 1
 if [ "$VIRTUAL_DESKTOP" = 1 ]; then
