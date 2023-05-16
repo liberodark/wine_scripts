@@ -8,7 +8,7 @@
 # Mega: https://mega.nz/folder/ZZUV1K7J#kIenmTQoi0if-SAcMSuAHA
 # Github: https://github.com/liberodark/wine_scripts
 
-version="1.4.4"
+version="1.4.5"
 
 echo "Welcome on Wine Portable Script $version"
 
@@ -76,7 +76,7 @@ SCRIPT_NAME="$(basename "$SCRIPT" | cut -d. -f1)"
 source "${DIR}/settings_run" &>/dev/null
 
 # Generate settings file if it's not exists or incomplete
-if [ -z "$CSMT_DISABLE" ] || [ -z "$DXVK" ] || [ -z "$USE_PULSEAUDIO" ] || [ -z "$PBA" ] || [ -z "$GLIBC_REQUIRED" ]; then
+if [ -z "$CSMT_DISABLE" ] || [ -z "${DXVK}" ] || [ -z "$USE_PULSEAUDIO" ] || [ -z "$PBA" ] || [ -z "$GLIBC_REQUIRED" ]; then
 cat << EOF > "${DIR}/settings_run"
 CSMT_DISABLE=0
 USE_PULSEAUDIO=1
@@ -295,7 +295,7 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
 	echo "Creating prefix, please wait."
 	echo
 
-	export WINEDLLOVERRIDES="$WINEDLLOVERRIDES;mscoree,mshtml="
+	export WINEDLLOVERRIDES="${WINEDLLOVERRIDES};mscoree,mshtml="
 	"$WINE" wineboot &>/dev/null
 	"$WINESERVER" -w
 	export WINEDLLOVERRIDES="winemenubuilder.exe="
@@ -659,24 +659,21 @@ fi
 ## Disable DXVK if required
 ## Also disable nvapi library if DXVK is enabled
 
-if [ "$DXVK" = 1 ]; then
-	if [ ! -f "${DIR}/game_info/dlls/x64/dxgi.dll" ] && grep dxvk "${WINEPREFIX}/winetricks.log" &>/dev/null; then
-		mkdir -p "${DIR}/game_info/dlls"
-
-            cp "${WINEPREFIX}/drive_c/windows/system32/"{d3d12.dll,d3d11.dll,d3d10core.dll,d3d9.dll,dxgi.dll} "${DIR}/game_info/dlls/x64"
-            cp "${WINEPREFIX}/drive_c/windows/syswow64/"{d3d12.dll,d3d11.dll,d3d10core.dll,d3d9.dll,dxgi.dll} "${DIR}/game_info/dlls/x32"
-    else
-            cp "${DIR}/game_info/dlls/x64/"{d3d12.dll,d3d11.dll,d3d10core.dll,d3d9.dll,dxgi.dll} "${WINEPREFIX}/drive_c/windows/system32"
-            cp "${DIR}/game_info/dlls/x32/"{d3d12.dll,d3d11.dll,d3d10core.dll,d3d9.dll,dxgi.dll} "${WINEPREFIX}/drive_c/windows/syswow64"
-	fi
+if [ "${DXVK}" = 1 ]; then
+			mkdir -p "${WINEPREFIX}/drive_c/windows/system32" "${WINEPREFIX}/drive_c/windows/syswow64"
+			ln -sf "${DIR}/game_info/dlls/x64/"{d3d12.dll,d3d11.dll,d3d10core.dll,d3d9.dll,dxgi.dll} "${WINEPREFIX}/drive_c/windows/system32" || exit
+			ln -sf "${DIR}/game_info/dlls/x32/"{d3d12.dll,d3d11.dll,d3d10core.dll,d3d9.dll,d3d8.dll,dxgi.dll} "${WINEPREFIX}/drive_c/windows/syswow64" || exit
+	else
+			ln -sf "${DIR}/wine/lib/wine/x86_64-windows/"{d3d12.dll,d3d11.dll,d3d10core.dll,d3d9.dll,dxgi.dll} "${WINEPREFIX}/drive_c/windows/system32" || exit
+			ln -sf "${DIR}/wine/lib/wine/i386-windows/"{d3d12.dll,d3d11.dll,d3d10core.dll,d3d9.dll,d3d8.dll,dxgi.dll} "${WINEPREFIX}/drive_c/windows/syswow64" || exit
 fi
 
-if [ "$DXVK" = 0 ]; then
+if [ "${DXVK}" = 0 ]; then
     export DXVK_ASYNC=0
-    export WINEDLLOVERRIDES="$WINEDLLOVERRIDES;dxgi,d3d9,d3d10core,d3d11,d3d12=b"
-elif [ "$DXVK" = 1 ] && [ -f "${DIR}/game_info/dlls/x64/dxgi.dll" ]; then
+    export WINEDLLOVERRIDES="${WINEDLLOVERRIDES};dxgi,d3d8,d3d9,d3d10core,d3d11,d3d12=b"
+elif [ "${DXVK}" = 1 ] && [ -f "${DIR}/game_info/dlls/x64/dxgi.dll" ]; then
     export DXVK_ASYNC=1
-    export WINEDLLOVERRIDES="$WINEDLLOVERRIDES;dxgi,d3d9,d3d10core,d3d11,d3d12=n;nvapi64,nvapi="
+    export WINEDLLOVERRIDES="${WINEDLLOVERRIDES};dxgi,d3d8,d3d9,d3d10core,d3d11,d3d12=n;nvapi64,nvapi="
 
 	if [ ! -d "${DIR}/cache/dxvk" ]; then
 		mkdir -p "${DIR}/cache/dxvk"
@@ -723,7 +720,7 @@ fi
 
 echo -ne "\nArch: x$(echo $WINEARCH | tail -c 3)"
 
-if [ ! -f "${DIR}/game_info/dlls/x64/dxgi.dll" ] || [ "$DXVK" = 0 ]; then
+if [ ! -f "${DIR}/game_info/dlls/x64/dxgi.dll" ] || [ "${DXVK}" = 0 ]; then
 	if [ "$CSMT_DISABLE" = 1 ]; then echo -ne "\nCSMT: disabled"
 	else echo -ne "\nCSMT: enabled"; fi
 
@@ -810,7 +807,7 @@ if [ "$GDIPLUS" = 1 ]; then
 	GDIPLUS_INSTALL="${DIR}/game_info/tweaks/gdiplus"
 	cp -vf --remove-destination "${GDIPLUS_INSTALL}/syswow64/gdiplus.dll" "${WINEPREFIX}/drive_c/windows/syswow64" || exit
     cp -vf --remove-destination "${GDIPLUS_INSTALL}/system32/gdiplus.dll" "${WINEPREFIX}/drive_c/windows/system32" || exit
-    export WINEDLLOVERRIDES="$WINEDLLOVERRIDES;gdiplus=n"
+    export WINEDLLOVERRIDES="${WINEDLLOVERRIDES};gdiplus=n"
 	sed -i "s@GDIPLUS=1@GDIPLUS=0@g" "${DIR}/settings_$SCRIPT_NAME"
 	echo "GDIPLUS is Installed"
 fi
