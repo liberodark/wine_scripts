@@ -8,7 +8,7 @@
 # Mega: https://mega.nz/folder/ZZUV1K7J#kIenmTQoi0if-SAcMSuAHA
 # Github: https://github.com/liberodark/wine_scripts
 
-version="1.4.5"
+version="1.4.6"
 
 echo "Welcome on Wine Portable Script $version"
 
@@ -76,7 +76,7 @@ SCRIPT_NAME="$(basename "$SCRIPT" | cut -d. -f1)"
 source "${DIR}/settings_run" &>/dev/null
 
 # Generate settings file if it's not exists or incomplete
-if [ -z "$CSMT_DISABLE" ] || [ -z "${DXVK}" ] || [ -z "$USE_PULSEAUDIO" ] || [ -z "$PBA" ] || [ -z "$GLIBC_REQUIRED" ]; then
+if [ -z "${CSMT_DISABLE}" ] || [ -z "${DXVK}" ] || [ -z "${USE_PULSEAUDIO}" ] || [ -z "${PBA}" ] || [ -z "${GLIBC_REQUIRED}" ]; then
 cat << EOF > "${DIR}/settings_run"
 CSMT_DISABLE=0
 USE_PULSEAUDIO=1
@@ -120,21 +120,21 @@ export DXVK_HUD
 export MANGOHUD
 export DXVK_HDR
 export DXVK_FRAME_RATE
-export WINEESYNC=$ESYNC
-export WINEFSYNC=$FSYNC
+export WINEESYNC=${ESYNC}
+export WINEFSYNC=${FSYNC}
 export WINE_DISABLE_VULKAN_OPWR=$NO_OPWR
-export PBA_ENABLE=$PBA
-export WINE_FULLSCREEN_FSR=$FSR
+export PBA_ENABLE=${PBA}
+export WINE_FULLSCREEN_FSR=${FSR}
 export WINEARCH=$PREFIX_ARCH
 export WINE_LARGE_ADDRESS_AWARE=$LARGE_ADDRESS_AWARE
 
 # Enable virtual desktop if VIRTUAL_DESKTOP env is set to 1
-if [ "$VIRTUAL_DESKTOP" = 1 ]; then
+if [ "${VIRTUAL_DESKTOP}" = 1 ]; then
 	VDESKTOP="explorer /desktop=Wine,$VIRTUAL_DESKTOP_SIZE"
 fi
 
 # Get current screen resolution
-if [ "$RESTORE_RESOLUTION" = 1 ]; then
+if [ "${RESTORE_RESOLUTION}" = 1 ]; then
 	RESOLUTION="$(xrandr -q | sed -n -e 's/.* connected primary \([^ +]*\).*/\1/p')"
     OUTPUT="$(xrandr -q | sed -n -e 's/\([^ ]*\) connected primary.*/\1/p')"
 fi
@@ -234,11 +234,11 @@ else
 	GAME_INFO="$(cat "${DIR}/game_info/game_info.txt")"
 fi
 
-GAME="$(echo "$GAME_INFO" | sed -n 6p)"
-VERSION="$(echo "$GAME_INFO" | sed -n 2p)"
-GAME_PATH="${WINEPREFIX}/drive_c/$(echo "$GAME_INFO" | sed -n 1p)"
-EXE="$(echo "$GAME_INFO" | sed -n 3p)"
-ARGS="$(echo "$GAME_INFO" | sed -n 4p)"
+GAME="$(echo "${GAME_INFO}" | sed -n 6p)"
+VERSION="$(echo "${GAME_INFO}" | sed -n 2p)"
+GAME_PATH="${WINEPREFIX}/drive_c/$(echo "${GAME_INFO}" | sed -n 1p)"
+EXE="$(echo "${GAME_INFO}" | sed -n 3p)"
+ARGS="$(echo "${GAME_INFO}" | sed -n 4p)"
 
 for arg in "$@"; do
 	if [ "$arg" != "--debug" ]; then
@@ -259,7 +259,7 @@ fi
 
 ## Exit if there is no game_info.txt file
 
-if [ ! "$GAME_INFO" ]; then
+if [ ! "${GAME_INFO}" ]; then
 	clear
 	echo "There is no game_info.txt file!"
 	exit
@@ -301,8 +301,8 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
 	export WINEDLLOVERRIDES="winemenubuilder.exe="
 
 	# Create symlink to game directory
-	mkdir -p "$GAME_PATH"; rm -rf "$GAME_PATH"
-	ln -sfr game_info/data "$GAME_PATH"
+	mkdir -p "${GAME_PATH}"; rm -rf "${GAME_PATH}"
+	ln -sfr game_info/data "${GAME_PATH}"
 
 	# Execute files in game_info/exe directory
 	if [ -d game_info/exe ]; then
@@ -608,7 +608,7 @@ fi
 
 ## Set sound driver to PulseAudio
 
-if [ "$USE_PULSEAUDIO" = 1 ] && [ ! -f "${WINEPREFIX}/drive_c/usepulse.reg" ]; then
+if [ "${USE_PULSEAUDIO}" = 1 ] && [ ! -f "${WINEPREFIX}/drive_c/usepulse.reg" ]; then
 	echo "Set audio driver to PulseAudio"
 
 	echo -e "Windows Registry Editor Version 5.00\n" > "${WINEPREFIX}/drive_c/usepulse.reg"
@@ -619,7 +619,7 @@ if [ "$USE_PULSEAUDIO" = 1 ] && [ ! -f "${WINEPREFIX}/drive_c/usepulse.reg" ]; t
 	"$WINE64" regedit C:\usepulse.reg &>/dev/null
 
 	rm -f "${WINEPREFIX}/drive_c/usealsa.reg"
-elif [ "$USE_PULSEAUDIO" = 0 ] && [ ! -f "${WINEPREFIX}/drive_c/usealsa.reg" ]; then
+elif [ "${USE_PULSEAUDIO}" = 0 ] && [ ! -f "${WINEPREFIX}/drive_c/usealsa.reg" ]; then
 	echo "Set audio driver to ALSA"
 
 	echo -e "Windows Registry Editor Version 5.00\n" > "${WINEPREFIX}/drive_c/usealsa.reg"
@@ -634,7 +634,7 @@ fi
 
 ## Disable CSMT if required
 
-if [ "$CSMT_DISABLE" = 1 ] && [ ! -f "${WINEPREFIX}/drive_c/csmt.reg" ]; then
+if [ "${CSMT_DISABLE}" = 1 ] && [ ! -f "${WINEPREFIX}/drive_c/csmt.reg" ]; then
 	echo "Disabling CSMT"
 
 	echo -e "Windows Registry Editor Version 5.00\n" > "${WINEPREFIX}/drive_c/csmt.reg"
@@ -643,7 +643,7 @@ if [ "$CSMT_DISABLE" = 1 ] && [ ! -f "${WINEPREFIX}/drive_c/csmt.reg" ]; then
 
 	"$WINE" regedit C:\csmt.reg &>/dev/null
 	"$WINE64" regedit C:\csmt.reg &>/dev/null
-elif [ "$CSMT_DISABLE" = 0 ] && [ -f "${WINEPREFIX}/drive_c/csmt.reg" ]; then
+elif [ "${CSMT_DISABLE}" = 0 ] && [ -f "${WINEPREFIX}/drive_c/csmt.reg" ]; then
 	echo "Enabling CSMT"
 
 	echo -e "Windows Registry Editor Version 5.00\n" > "${WINEPREFIX}/drive_c/csmt.reg"
@@ -661,19 +661,19 @@ fi
 
 if [ "${DXVK}" = 1 ]; then
 			mkdir -p "${WINEPREFIX}/drive_c/windows/system32" "${WINEPREFIX}/drive_c/windows/syswow64"
-			ln -sf "${DIR}/game_info/dlls/x64/"{d3d12.dll,d3d11.dll,d3d10core.dll,d3d9.dll,dxgi.dll} "${WINEPREFIX}/drive_c/windows/system32" || exit
-			ln -sf "${DIR}/game_info/dlls/x32/"{d3d12.dll,d3d11.dll,d3d10core.dll,d3d9.dll,d3d8.dll,dxgi.dll} "${WINEPREFIX}/drive_c/windows/syswow64" || exit
+			ln -sf "${DIR}/game_info/dlls/x64/"{d3d12.dll,d3d12core.dll,d3d11.dll,d3d10core.dll,d3d9.dll,dxgi.dll} "${WINEPREFIX}/drive_c/windows/system32" || exit
+			ln -sf "${DIR}/game_info/dlls/x32/"{d3d12.dll,d3d12core.dll,d3d11.dll,d3d10core.dll,d3d9.dll,d3d8.dll,dxgi.dll} "${WINEPREFIX}/drive_c/windows/syswow64" || exit
 	else
-			ln -sf "${DIR}/wine/lib/wine/x86_64-windows/"{d3d12.dll,d3d11.dll,d3d10core.dll,d3d9.dll,dxgi.dll} "${WINEPREFIX}/drive_c/windows/system32" || exit
-			ln -sf "${DIR}/wine/lib/wine/i386-windows/"{d3d12.dll,d3d11.dll,d3d10core.dll,d3d9.dll,d3d8.dll,dxgi.dll} "${WINEPREFIX}/drive_c/windows/syswow64" || exit
+			ln -sf "${DIR}/wine/lib/wine/x86_64-windows/"{d3d12.dll,d3d12core.dll,d3d11.dll,d3d10core.dll,d3d9.dll,dxgi.dll} "${WINEPREFIX}/drive_c/windows/system32" || exit
+			ln -sf "${DIR}/wine/lib/wine/i386-windows/"{d3d12.dll,d3d12core.dll,d3d11.dll,d3d10core.dll,d3d9.dll,d3d8.dll,dxgi.dll} "${WINEPREFIX}/drive_c/windows/syswow64" || exit
 fi
 
 if [ "${DXVK}" = 0 ]; then
     export DXVK_ASYNC=0
-    export WINEDLLOVERRIDES="${WINEDLLOVERRIDES};dxgi,d3d8,d3d9,d3d10core,d3d11,d3d12=b"
+    export WINEDLLOVERRIDES="${WINEDLLOVERRIDES};dxgi,d3d8,d3d9,d3d10core,d3d11,d3d12,d3d12core=b"
 elif [ "${DXVK}" = 1 ] && [ -f "${DIR}/game_info/dlls/x64/dxgi.dll" ]; then
     export DXVK_ASYNC=1
-    export WINEDLLOVERRIDES="${WINEDLLOVERRIDES};dxgi,d3d8,d3d9,d3d10core,d3d11,d3d12=n;nvapi64,nvapi="
+    export WINEDLLOVERRIDES="${WINEDLLOVERRIDES};dxgi,d3d8,d3d9,d3d10core,d3d11,d3d12,d3d12core=n;nvapi64,nvapi="
 
 	if [ ! -d "${DIR}/cache/dxvk" ]; then
 		mkdir -p "${DIR}/cache/dxvk"
@@ -721,11 +721,11 @@ fi
 echo -ne "\nArch: x$(echo $WINEARCH | tail -c 3)"
 
 if [ ! -f "${DIR}/game_info/dlls/x64/dxgi.dll" ] || [ "${DXVK}" = 0 ]; then
-	if [ "$CSMT_DISABLE" = 1 ]; then echo -ne "\nCSMT: disabled"
+	if [ "${CSMT_DISABLE}" = 1 ]; then echo -ne "\nCSMT: disabled"
 	else echo -ne "\nCSMT: enabled"; fi
 
 	if [ "$NO_PBA_FOUND" = 0 ]; then
-		if [ "$PBA_ENABLE" = 0 ]; then echo -ne "\nPBA: disabled"
+		if [ "${PBA_ENABLE}" = 0 ]; then echo -ne "\nPBA: disabled"
 		else echo -ne "\nPBA: enabled"; fi
 	fi
 
@@ -738,32 +738,32 @@ if [ $NO_ESYNC_FOUND = 0 ]; then
 	if [ $WINEESYNC = 1 ]; then echo -ne "\nESYNC: enabled"
 	else echo -ne "\nESYNC: disabled"; fi
 
-	if [ $ESYNC_FORCE_OFF = 1 ]; then echo -ne " (disabled; ulimit failed)"; fi
+	if [ ${ESYNC_FORCE_OFF} = 1 ]; then echo -ne " (disabled; ulimit failed)"; fi
 fi
 
-if [ "$ESYNC" = 1 ]; then
+if [ "${ESYNC}" = 1 ]; then
 	echo -ne "\nESYNC: enabled"
 fi
 
-if [ "$FSYNC" = 1 ]; then
+if [ "${FSYNC}" = 1 ]; then
 	echo -ne "\nFSYNC: enabled"
 fi
 
-if [ "$FSR" = 1 ]; then
+if [ "${FSR}" = 1 ]; then
 	echo -ne "\nFSR: enabled"
 fi
 
-if [ "$GAMEMODE" = 1 ]; then
-	if [ ! "$GAMEMODE_RUN" ] > /dev/null 2>&1; then echo -ne "\nError GameMode is not installed\n"
+if [ "${GAMEMODE}" = 1 ]; then
+	if [ ! "${GAMEMODE_RUN}" ] > /dev/null 2>&1; then echo -ne "\nError GameMode is not installed\n"
 	exit
 	else echo -ne "\nGAMEMODE: enabled"; fi
 	else
-	if [ "$GAMEMODE" = 0 ]; then echo -ne "\nGAMEMODE: disabled"; fi
+	if [ "${GAMEMODE}" = 0 ]; then echo -ne "\nGAMEMODE: disabled"; fi
 fi
 
 echo -ne "\n\n======================================================="
 
-if [ $NO_ESYNC_FOUND = 0 ] && [ $ESYNC_FORCE_OFF = 1 ]; then
+if [ $NO_ESYNC_FOUND = 0 ] && [ ${ESYNC_FORCE_OFF} = 1 ]; then
 	echo -ne "\n\nIf you want to enable ESYNC to improve game performance then"
 	echo -ne "\nconfigure open file limit in /etc/security/limits.conf, add line:"
 	echo -ne "\n\nUSERNAME hard nofile 500000"
@@ -825,21 +825,21 @@ if [ "$COREFONT" = 1 ]; then
 fi
 
 # Launch the game
-cd "$GAME_PATH/$(echo "$GAME_INFO" | sed -n 5p)" || exit
+cd "${GAME_PATH}/$(echo "${GAME_INFO}" | sed -n 5p)" || exit
 "$WINESERVER" -w
-if [ "$GAMEMODE" = 1 ]; then
+if [ "${GAMEMODE}" = 1 ]; then
 	# shellcheck disable=SC2086
-	"$GAMEMODE_RUN" "$WINE" $VDESKTOP "$EXE" $ARGS
+	"${GAMEMODE_RUN}" "$WINE" $VDESKTOP "$EXE" $ARGS
 	"$WINESERVER" -w
 
-elif [ "$GAMEMODE" = 0 ]; then
+elif [ "${GAMEMODE}" = 0 ]; then
 	# shellcheck disable=SC2086
 	"$WINE" $VDESKTOP "$EXE" $ARGS
 	"$WINESERVER" -w
 fi
 
 # Restore screen resolution
-if [ "$RESTORE_RESOLUTION" = 1 ]; then
+if [ "${RESTORE_RESOLUTION}" = 1 ]; then
 	xrandr --output "$OUTPUT" --mode "$RESOLUTION" &>/dev/null
 	xgamma -gamma 1.0 &>/dev/null
 fi
