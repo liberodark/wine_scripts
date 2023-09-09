@@ -8,7 +8,7 @@
 # Mega: https://mega.nz/folder/ZZUV1K7J#kIenmTQoi0if-SAcMSuAHA
 # Github: https://github.com/liberodark/wine_scripts
 
-version="1.4.6"
+version="1.4.7"
 
 echo "Welcome on Wine Portable Script $version"
 
@@ -94,6 +94,7 @@ ESYNC=1
 FSYNC=1
 PBA=0
 FSR=0
+NVAPI=0
 GAMEMODE=0
 MF=0
 MSVC=0
@@ -101,6 +102,8 @@ GDIPLUS=0
 COREFONT=0
 NO_OPWR=0
 LARGE_ADDRESS_AWARE=0
+HIDE_NVIDIA_GPU=0
+VKBASALT=0
 
 WINDOWS_VERSION=win7
 PREFIX_ARCH=win64
@@ -122,11 +125,13 @@ export DXVK_HDR
 export DXVK_FRAME_RATE
 export WINEESYNC=${ESYNC}
 export WINEFSYNC=${FSYNC}
-export WINE_DISABLE_VULKAN_OPWR=$NO_OPWR
+export WINE_DISABLE_VULKAN_OPWR=${NO_OPWR}
 export PBA_ENABLE=${PBA}
 export WINE_FULLSCREEN_FSR=${FSR}
-export WINEARCH=$PREFIX_ARCH
-export WINE_LARGE_ADDRESS_AWARE=$LARGE_ADDRESS_AWARE
+export WINEARCH=${PREFIX_ARCH}
+export WINE_LARGE_ADDRESS_AWARE=${LARGE_ADDRESS_AWARE}
+export WINE_HIDE_NVIDIA_GPU=${HIDE_NVIDIA_GPU}
+export ENABLE_VKBASALT=${VKBASALT}
 
 # Enable virtual desktop if VIRTUAL_DESKTOP env is set to 1
 if [ "${VIRTUAL_DESKTOP}" = 1 ]; then
@@ -668,12 +673,18 @@ if [ "${DXVK}" = 1 ]; then
 			ln -sf "${DIR}/wine/lib/wine/i386-windows/"{d3d12.dll,d3d12core.dll,d3d11.dll,d3d10core.dll,d3d9.dll,d3d8.dll,dxgi.dll} "${WINEPREFIX}/drive_c/windows/syswow64" || exit
 fi
 
+if [ "${NVAPI}" = 1 ]; then
+			mkdir -p "${WINEPREFIX}/drive_c/windows/system32" "${WINEPREFIX}/drive_c/windows/syswow64"
+			ln -sf "${DIR}/game_info/dlls/x64/nvapi64.dll" "${WINEPREFIX}/drive_c/windows/system32" || exit
+			ln -sf "${DIR}/game_info/dlls/x32/nvapi.dll" "${WINEPREFIX}/drive_c/windows/syswow64" || exit
+fi
+
 if [ "${DXVK}" = 0 ]; then
-    export DXVK_ASYNC=0
-    export WINEDLLOVERRIDES="${WINEDLLOVERRIDES};dxgi,d3d8,d3d9,d3d10core,d3d11,d3d12,d3d12core=b"
+	export DXVK_ASYNC=0
+	export WINEDLLOVERRIDES="${WINEDLLOVERRIDES};dxgi,d3d8,d3d9,d3d10core,d3d11,d3d12,d3d12core=b"
 elif [ "${DXVK}" = 1 ] && [ -f "${DIR}/game_info/dlls/x64/dxgi.dll" ]; then
-    export DXVK_ASYNC=1
-    export WINEDLLOVERRIDES="${WINEDLLOVERRIDES};dxgi,d3d8,d3d9,d3d10core,d3d11,d3d12,d3d12core=n;nvapi64,nvapi="
+	export DXVK_ASYNC=1
+	export WINEDLLOVERRIDES="${WINEDLLOVERRIDES};dxgi,d3d8,d3d9,d3d10core,d3d11,d3d12,d3d12core=n"
 
 	if [ ! -d "${DIR}/cache/dxvk" ]; then
 		mkdir -p "${DIR}/cache/dxvk"
@@ -682,6 +693,14 @@ elif [ "${DXVK}" = 1 ] && [ -f "${DIR}/game_info/dlls/x64/dxgi.dll" ]; then
 	if [ ! -d "${WINEPREFIX}/dosdevices/j:" ]; then
 		ln -sfr "${DIR}/cache/dxvk" "${WINEPREFIX}/dosdevices/j:"
 	fi
+fi
+
+if [ "${NVAPI}" = 0 ]; then
+	export DXVK_ENABLE_NVAPI=0
+	export WINEDLLOVERRIDES="${WINEDLLOVERRIDES};nvapi64,nvapi="
+elif [ "${NVAPI}" = 1 ] && [ -f "${DIR}/game_info/dlls/x64/nvapi64.dll" ]; then
+	export DXVK_ENABLE_NVAPI=1
+	export WINEDLLOVERRIDES="${WINEDLLOVERRIDES};nvapi,nvapi64=n"
 fi
 
 ## Execute custom scripts
@@ -751,6 +770,14 @@ fi
 
 if [ "${FSR}" = 1 ]; then
 	echo -ne "\nFSR: enabled"
+fi
+
+if [ "${NVAPI}" = 1 ]; then
+	echo -ne "\nNVAPI: enabled"
+fi
+
+if [ "${VKBASALT}" = 1 ]; then
+	echo -ne "\nVKBASALT: enabled"
 fi
 
 if [ "${GAMEMODE}" = 1 ]; then
