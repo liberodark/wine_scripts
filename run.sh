@@ -8,7 +8,7 @@
 # Mega: https://mega.nz/folder/ZZUV1K7J#kIenmTQoi0if-SAcMSuAHA
 # Github: https://github.com/liberodark/wine_scripts
 
-version="1.4.7"
+version="1.4.8"
 
 echo "Welcome on Wine Portable Script $version"
 
@@ -85,6 +85,9 @@ RESTORE_RESOLUTION=1
 VIRTUAL_DESKTOP=0
 VIRTUAL_DESKTOP_SIZE=800x600
 
+GAME_USER=liberodark
+GAME_LANG=english
+
 DXVK=1
 DXVK_HUD=0
 MANGOHUD=0
@@ -105,7 +108,7 @@ LARGE_ADDRESS_AWARE=0
 HIDE_NVIDIA_GPU=0
 VKBASALT=0
 
-WINDOWS_VERSION=win7
+WINDOWS_VERSION=win10
 PREFIX_ARCH=win64
 
 # Change these GLIBC variables only if you know what you're doing
@@ -134,6 +137,8 @@ export WINEARCH=${PREFIX_ARCH}
 export WINE_LARGE_ADDRESS_AWARE=${LARGE_ADDRESS_AWARE}
 export WINE_HIDE_NVIDIA_GPU=${HIDE_NVIDIA_GPU}
 export ENABLE_VKBASALT=${VKBASALT}
+export GAME_USER=${GAME_USER}
+export GAME_LANG=${GAME_LANG}
 
 # Enable virtual desktop if VIRTUAL_DESKTOP env is set to 1
 if [ "${VIRTUAL_DESKTOP}" = 1 ]; then
@@ -725,6 +730,14 @@ if [ -d game_info/patch ]; then
 	done
 fi
 
+# Set Default Username & Language
+if [ -d documents/AppData ]; then
+	SETTINGS_FOLDER="${DIR}/documents/AppData/Roaming/Goldberg SteamEmu Saves/settings"
+	mkdir -p "${SETTINGS_FOLDER}"
+	echo "${GAME_USER}" > "${SETTINGS_FOLDER}/account_name.txt"
+	echo "${GAME_LANG}" > "${SETTINGS_FOLDER}/language.txt"
+fi
+
 ## Run the game
 
 # Output game, vars and Wine information
@@ -851,6 +864,16 @@ if [ "$COREFONT" = 1 ]; then
 		done
 	sed -i "s@COREFONT=1@COREFONT=0@g" "${DIR}/settings_$SCRIPT_NAME"
 	echo "COREFONT is Installed"
+fi
+
+# Set Username & Language
+if [ "${GAME_USER}" != liberodark ] || [ "${GAME_LANG}" != english ]; then
+	SETTINGS_FOLDER="${DIR}/documents/AppData/Roaming/Goldberg SteamEmu Saves/settings"
+	mkdir -p "${SETTINGS_FOLDER}"
+	echo "${GAME_USER}" > "${SETTINGS_FOLDER}/account_name.txt"
+	echo "${GAME_LANG}" > "${SETTINGS_FOLDER}/language.txt"
+	echo "Username : ${GAME_USER}"
+	echo "Language : ${GAME_LANG}"
 fi
 
 # Launch the game
