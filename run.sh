@@ -8,7 +8,7 @@
 # Mega: https://mega.nz/folder/ZZUV1K7J#kIenmTQoi0if-SAcMSuAHA
 # Github: https://github.com/liberodark/wine_scripts
 
-version="1.4.8"
+version="1.4.9"
 
 echo "Welcome on Wine Portable Script $version"
 
@@ -118,7 +118,7 @@ GLIBC_REQUIRED=2.23
 
 # You can also put custom variables in this file
 EOF
-        # shellcheck disable=SC1091
+		# shellcheck disable=SC1091
 	source "${DIR}/settings_run"
 fi
 
@@ -148,7 +148,7 @@ fi
 # Get current screen resolution
 if [ "${RESTORE_RESOLUTION}" = 1 ]; then
 	RESOLUTION="$(xrandr -q | sed -n -e 's/.* connected primary \([^ +]*\).*/\1/p')"
-    OUTPUT="$(xrandr -q | sed -n -e 's/\([^ ]*\) connected primary.*/\1/p')"
+	OUTPUT="$(xrandr -q | sed -n -e 's/\([^ ]*\) connected primary.*/\1/p')"
 fi
 
 # Make Wine binaries executable
@@ -255,7 +255,7 @@ ARGS="$(echo "${GAME_INFO}" | sed -n 4p)"
 for arg in "$@"; do
 	if [ "$arg" != "--debug" ]; then
 		ARGS="$ARGS $arg"
-    fi
+	fi
 done
 
 ### Prepare for launching game
@@ -326,69 +326,69 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
 		case "$file" in
 
   		"game_info/exe/DXSETUP.exe" | "game_info/exe/dxsetup.exe")
-    		"$WINE" start "$file" /silent &>/dev/null
+			"$WINE" start "$file" /silent &>/dev/null
 			"$WINESERVER" -w
 			;;
 
 		"game_info/exe/vcredist_x64_2005.exe" | "game_info/exe/vcredist_x86_2005.exe")
-    		"$WINE" start "$file" /q &>/dev/null
+			"$WINE" start "$file" /q &>/dev/null
 			"$WINESERVER" -w
-    		;;
+			;;
 
   		"game_info/exe/vcredist_x64_2008.exe" | "game_info/exe/vcredist_x86_2008.exe")
-    		"$WINE" start "$file" /quiet /qn /norestart &>/dev/null
+			"$WINE" start "$file" /quiet /qn /norestart &>/dev/null
 			"$WINESERVER" -w
-    		;;
+			;;
 
   		"game_info/exe/vcredist_x64_2010.exe" | "game_info/exe/vcredist_x86_2010.exe")
-    		"$WINE" start "$file" /quiet /qn /norestart &>/dev/null
+			"$WINE" start "$file" /quiet /qn /norestart &>/dev/null
 			"$WINESERVER" -w
-    		;;
+			;;
 
 		"game_info/exe/vcredist_x64_2012.exe" | "game_info/exe/vcredist_x86_2012.exe")
-    		"$WINE" start "$file" /quiet /qn /norestart &>/dev/null
+			"$WINE" start "$file" /quiet /qn /norestart &>/dev/null
 			"$WINESERVER" -w
-    		;;
+			;;
 
 		"game_info/exe/vcredist_x64_2013.exe" | "game_info/exe/vcredist_x86_2013.exe")
-    		"$WINE" start "$file" /quiet /qn /norestart &>/dev/null
+			"$WINE" start "$file" /quiet /qn /norestart &>/dev/null
 			"$WINESERVER" -w
-    		;;
+			;;
 
 		"game_info/exe/vcredist_x64_2015.exe" | "game_info/exe/vcredist_x86_2015.exe")
-    		"$WINE" start "$file" /quiet /qn /norestart &>/dev/null
+			"$WINE" start "$file" /quiet /qn /norestart &>/dev/null
 			"$WINESERVER" -w
-    		;;
+			;;
 
 		"game_info/exe/vcredist_x64_2017.exe" | "game_info/exe/vcredist_x86_2017.exe")
-    		"$WINE" start "$file" /quiet /qn /norestart &>/dev/null
+			"$WINE" start "$file" /quiet /qn /norestart &>/dev/null
 			"$WINESERVER" -w
-    		;;
+			;;
 
 		"game_info/exe/vcredist_x64_2019.exe" | "game_info/exe/vcredist_x86_2019.exe")
-    		"$WINE" start "$file" /quiet /qn /norestart &>/dev/null
+			"$WINE" start "$file" /quiet /qn /norestart &>/dev/null
 			"$WINESERVER" -w
-    		;;
+			;;
 
 		"game_info/exe/vcredist_x64_2015_2019.exe" | "game_info/exe/vcredist_x86_2015_2019.exe")
-    		"$WINE" start "$file" /quiet /qn /norestart &>/dev/null
+			"$WINE" start "$file" /quiet /qn /norestart &>/dev/null
 			"$WINESERVER" -w
-    		;;
+			;;
 
 		"game_info/exe/vcredist_x64_2015_2022.exe" | "game_info/exe/vcredist_x86_2015_2022.exe")
-    		"$WINE" start "$file" /quiet /qn /norestart &>/dev/null
+			"$WINE" start "$file" /quiet /qn /norestart &>/dev/null
 			"$WINESERVER" -w
-    		;;
+			;;
 
 		"game_info/exe/oalinst.exe")
-    		"$WINE" start "$file" /s &>/dev/null
+			"$WINE" start "$file" /s &>/dev/null
 			"$WINESERVER" -w
-    		;;
+			;;
 
   		*)
-    		"$WINE" start "$file" &>/dev/null
+			"$WINE" start "$file" &>/dev/null
 			"$WINESERVER" -w
-    		;;
+			;;
 		esac
 		done
 	fi
@@ -565,7 +565,7 @@ fi
 ## Set windows version
 
 if [ ! -f .temp_files/lastwin ] || [ "$WINDOWS_VERSION" != "$(cat .temp_files/lastwin)" ]; then
-	if [ "$WINDOWS_VERSION" = "winxp" ] || [ "$WINDOWS_VERSION" = "win10" ] || [ "$WINDOWS_VERSION" = "win7" ]; then
+	if [ "$WINDOWS_VERSION" = "winxp" ] || [ "$WINDOWS_VERSION" = "win10" ] || [ "$WINDOWS_VERSION" = "win11" ] || [ "$WINDOWS_VERSION" = "win7" ]; then
 		echo "Changing Windows version to $WINDOWS_VERSION"
 
 		if [ "$WINDOWS_VERSION" = "winxp" ]; then
@@ -575,13 +575,13 @@ if [ ! -f .temp_files/lastwin ] || [ "$WINDOWS_VERSION" != "$(cat .temp_files/la
 				currentversion="5.1"
 				csdversion_hex=dword:00000300
 			else
-                csdversion="Service Pack 2"
-                currentbuildnumber="3790"
-                currentversion="5.2"
-                csdversion_hex=dword:00000200
+				csdversion="Service Pack 2"
+				currentbuildnumber="3790"
+				currentversion="5.2"
+				csdversion_hex=dword:00000200
 
-                "$WINE" reg add "HKLM\\System\\CurrentControlSet\\Control\\ProductOptions" /v ProductType /d "WinNT" /f &>/dev/null
-             fi
+				"$WINE" reg add "HKLM\\System\\CurrentControlSet\\Control\\ProductOptions" /v ProductType /d "WinNT" /f &>/dev/null
+			 fi
 		elif [ "$WINDOWS_VERSION" = "win7" ]; then
 			csdversion="Service Pack 1"
 			currentbuildnumber="7601"
@@ -590,13 +590,20 @@ if [ ! -f .temp_files/lastwin ] || [ "$WINDOWS_VERSION" != "$(cat .temp_files/la
 
 			"$WINE" reg add "HKLM\\System\\CurrentControlSet\\Control\\ProductOptions" /v ProductType /d "WinNT" /f &>/dev/null
 		elif [ "$WINDOWS_VERSION" = "win10" ]; then
-            csdversion=""
-            currentbuildnumber="10240"
-            currentversion="10.0"
-            csdversion_hex=dword:00000000
+			csdversion=""
+			currentbuildnumber="19045"
+			currentversion="10.0"
+			csdversion_hex=dword:00000000
 
-            "$WINE" reg add "HKLM\\System\\CurrentControlSet\\Control\\ProductOptions" /v ProductType /d "WinNT" /f &>/dev/null
-        fi
+			"$WINE" reg add "HKLM\\System\\CurrentControlSet\\Control\\ProductOptions" /v ProductType /d "WinNT" /f &>/dev/null
+		elif [ "$WINDOWS_VERSION" = "win11" ]; then
+			csdversion=""
+			currentbuildnumber="22631"
+			currentversion="11.0"
+			csdversion_hex=dword:00000000
+
+			"$WINE" reg add "HKLM\\System\\CurrentControlSet\\Control\\ProductOptions" /v ProductType /d "WinNT" /f &>/dev/null
+		fi
 
 		echo -e "Windows Registry Editor Version 5.00\n" > "${WINEPREFIX}/drive_c/setwinver.reg"
 		echo -e "[HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows NT\\CurrentVersion]" >> "${WINEPREFIX}/drive_c/setwinver.reg"
@@ -848,8 +855,8 @@ if [ "$GDIPLUS" = 1 ]; then
 	echo "Install GDIPLUS"
 	GDIPLUS_INSTALL="${DIR}/game_info/tweaks/gdiplus"
 	cp -vf --remove-destination "${GDIPLUS_INSTALL}/syswow64/gdiplus.dll" "${WINEPREFIX}/drive_c/windows/syswow64" || exit
-    cp -vf --remove-destination "${GDIPLUS_INSTALL}/system32/gdiplus.dll" "${WINEPREFIX}/drive_c/windows/system32" || exit
-    export WINEDLLOVERRIDES="${WINEDLLOVERRIDES};gdiplus=n"
+	cp -vf --remove-destination "${GDIPLUS_INSTALL}/system32/gdiplus.dll" "${WINEPREFIX}/drive_c/windows/system32" || exit
+	export WINEDLLOVERRIDES="${WINEDLLOVERRIDES};gdiplus=n"
 	sed -i "s@GDIPLUS=1@GDIPLUS=0@g" "${DIR}/settings_$SCRIPT_NAME"
 	echo "GDIPLUS is Installed"
 fi
