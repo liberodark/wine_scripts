@@ -8,7 +8,7 @@
 # Mega: https://mega.nz/folder/ZZUV1K7J#kIenmTQoi0if-SAcMSuAHA
 # Github: https://github.com/liberodark/wine_scripts
 
-version="1.4.9"
+version="1.5.0"
 
 echo "Welcome on Wine Portable Script $version"
 
@@ -680,10 +680,10 @@ fi
 
 if [ "${DXVK}" = 1 ]; then
 			mkdir -p "${WINEPREFIX}/drive_c/windows/system32" "${WINEPREFIX}/drive_c/windows/syswow64"
-			ln -sf "${DIR}/game_info/dlls/x64/"{d3d12.dll,d3d12core.dll,d3d11.dll,d3d10core.dll,d3d9.dll,dxgi.dll} "${WINEPREFIX}/drive_c/windows/system32" || exit
+			ln -sf "${DIR}/game_info/dlls/x64/"{d3d12.dll,d3d12core.dll,d3d11.dll,d3d10core.dll,d3d9.dll,d3d8.dll,dxgi.dll} "${WINEPREFIX}/drive_c/windows/system32" || exit
 			ln -sf "${DIR}/game_info/dlls/x32/"{d3d12.dll,d3d12core.dll,d3d11.dll,d3d10core.dll,d3d9.dll,d3d8.dll,dxgi.dll} "${WINEPREFIX}/drive_c/windows/syswow64" || exit
 	else
-			ln -sf "${DIR}/wine/lib/wine/x86_64-windows/"{d3d12.dll,d3d12core.dll,d3d11.dll,d3d10core.dll,d3d9.dll,dxgi.dll} "${WINEPREFIX}/drive_c/windows/system32" || exit
+			ln -sf "${DIR}/wine/lib/wine/x86_64-windows/"{d3d12.dll,d3d12core.dll,d3d11.dll,d3d10core.dll,d3d9.dll,d3d8.dll,dxgi.dll} "${WINEPREFIX}/drive_c/windows/system32" || exit
 			ln -sf "${DIR}/wine/lib/wine/i386-windows/"{d3d12.dll,d3d12core.dll,d3d11.dll,d3d10core.dll,d3d9.dll,d3d8.dll,dxgi.dll} "${WINEPREFIX}/drive_c/windows/syswow64" || exit
 fi
 
