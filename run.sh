@@ -8,7 +8,7 @@
 # Mega: https://mega.nz/folder/ZZUV1K7J#kIenmTQoi0if-SAcMSuAHA
 # Github: https://github.com/liberodark/wine_scripts
 
-version="1.5.0"
+version="1.5.1"
 
 echo "Welcome on Wine Portable Script $version"
 
@@ -316,6 +316,18 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
 	mkdir -p "${GAME_PATH}"; rm -rf "${GAME_PATH}"
 	ln -sfr game_info/data "${GAME_PATH}"
 
+	# Execute files in game_info/msi directory
+	if [ -d game_info/msi ]; then
+		echo "Executing files"
+
+		for file in game_info/msi/*.msi; do
+			echo "Executing file $file"
+
+			"$MSIEXEC" -i "$file" /quiet /qn /norestart &>/dev/null
+			"$WINESERVER" -w
+		done
+	fi
+
 	# Execute files in game_info/exe directory
 	if [ -d game_info/exe ]; then
 		echo "Executing files"
@@ -393,18 +405,6 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
 		done
 	fi
 
-	# Execute files in game_info/msi directory
-	if [ -d game_info/msi ]; then
-		echo "Executing files"
-
-		for file in game_info/msi/*.msi; do
-			echo "Executing file $file"
-
-			"$MSIEXEC" -i "$file" /quiet /qn /norestart &>/dev/null
-			"$WINESERVER" -w
-		done
-	fi
-
 	# Apply reg files
 	if [ -d game_info/regs ]; then
 		echo "Importing registry files"
@@ -424,20 +424,31 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
 		echo -e "Windows Registry Editor Version 5.00\n" > dlloverrides.reg
 		echo -e "[HKEY_CURRENT_USER\Software\Wine\DllOverrides]" >> dlloverrides.reg
 
-		for x in game_info/dlls/*; do
-			echo "Creating symlink to $x"
+		find game_info/dlls -type f -name "*.dll" | while read x; do
+		dll_name=$(basename "$x")
+		case "$dll_name" in
+			d3d8.dll|d3d9.dll|d3d10core.dll|d3d11.dll|d3d12core.dll|d3d12.dll|dxgi.dll|nvapi.dll|nvapi64.dll)
+				#echo "Skipping registration for $dll_name"
+				# Create symlink and add DLL override to the registry without registration
+				ln -sfr "$x" "${WINEPREFIX}/drive_c/windows/system32/$(basename $x)"
+				echo -e '"'$(basename $x .dll)'"="native"' >> dlloverrides.reg
+				continue
+				;;
+		esac
 
-			ln -sfr "$x" "${WINEPREFIX}/drive_c/windows/system32"
+		echo "Creating symlink to $x"
 
-			# Do not override component if required
-			echo -e '"'$(basename $x .dll)'"="native"' >> dlloverrides.reg
+		ln -sfr "$x" "${WINEPREFIX}/drive_c/windows/system32"
 
-			# Register component with regsvr32
-			echo "Registering $(basename $x)"
+		# Do not override component if required
+		echo -e '"'$(basename $x .dll)'"="native"' >> dlloverrides.reg
 
-			"$WINE" regsvr32 "$(basename $x)" &>/dev/null
-			"$WINE64" regsvr32 "$(basename $x)" &>/dev/null
-		done
+		# Register component with regsvr32
+		echo "Registering $(basename $x)"
+
+		"$WINE" regsvr32 "$(basename $x)" &>/dev/null
+		"$WINE64" regsvr32 "$(basename $x)" &>/dev/null
+	done
 
 		echo "Overriding dlls"
 
