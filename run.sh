@@ -2,7 +2,7 @@
 #
 # About: Wine Portable start script
 # Author: Kron, liberodark
-# Thanks : 
+# Thanks :
 # License: GNU GPLv3
 ### Link to latest version:
 # Mega: https://mega.nz/folder/ZZUV1K7J#kIenmTQoi0if-SAcMSuAHA
@@ -334,7 +334,7 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
 
 		for file in game_info/exe/*.exe; do
 			echo "Executing file $file"
-			
+
 		case "$file" in
 
   		"game_info/exe/DXSETUP.exe" | "game_info/exe/dxsetup.exe")
@@ -427,7 +427,7 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
 		find game_info/dlls -type f -name "*.dll" | while read x; do
 		dll_name=$(basename "$x")
 		case "$dll_name" in
-			d3d8.dll|d3d9.dll|d3d10core.dll|d3d11.dll|d3d12core.dll|d3d12.dll|dxgi.dll|nvapi.dll|nvapi64.dll)
+			d3d8.dll|d3d9.dll|d3d10core.dll|d3d11.dll|d3d12core.dll|d3d12.dll|dxgi.dll|nvapi.dll|nvapi64.dll|nvofapi64.dll)
 				#echo "Skipping registration for $dll_name"
 				# Create symlink and add DLL override to the registry without registration
 				ln -sfr "$x" "${WINEPREFIX}/drive_c/windows/system32/$(basename $x)"
@@ -701,6 +701,7 @@ fi
 if [ "${NVAPI}" = 1 ]; then
 			mkdir -p "${WINEPREFIX}/drive_c/windows/system32" "${WINEPREFIX}/drive_c/windows/syswow64"
 			ln -sf "${DIR}/game_info/dlls/x64/nvapi64.dll" "${WINEPREFIX}/drive_c/windows/system32" || exit
+			ln -sf "${DIR}/game_info/dlls/x64/nvofapi64.dll" "${WINEPREFIX}/drive_c/windows/system32" || exit
 			ln -sf "${DIR}/game_info/dlls/x32/nvapi.dll" "${WINEPREFIX}/drive_c/windows/syswow64" || exit
 fi
 
