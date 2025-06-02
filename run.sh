@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # About: Wine Portable start script
 # Author: Kron, liberodark
@@ -8,7 +8,7 @@
 # Mega: https://mega.nz/folder/ZZUV1K7J#kIenmTQoi0if-SAcMSuAHA
 # Github: https://github.com/liberodark/wine_scripts
 
-version="1.5.1"
+version="1.5.2"
 
 echo "Welcome on Wine Portable Script $version"
 
@@ -105,8 +105,16 @@ GDIPLUS=0
 COREFONT=0
 NO_OPWR=0
 LARGE_ADDRESS_AWARE=0
+CPU_LIMIT=0
+HIDE_APU=0
+HIDE_AMD_GPU=0
+HIDE_INTEL_GPU=0
 HIDE_NVIDIA_GPU=0
+HIDE_VANGOGH_GPU=0
+HEAP_DELAY_FREE=0
+HEAP_ZERO_MEMORY=0
 VKBASALT=0
+USE_ANTICHEAT=0
 
 WINDOWS_VERSION=win10
 PREFIX_ARCH=win64
@@ -135,10 +143,18 @@ export WINE_FULLSCREEN_FSR=${FSR}
 #export WINE_FULLSCREEN_FSR_MODE=ultra
 export WINEARCH=${PREFIX_ARCH}
 export WINE_LARGE_ADDRESS_AWARE=${LARGE_ADDRESS_AWARE}
+[ "${CPU_LIMIT}" != "0" ] && export WINE_CPU_TOPOLOGY=${CPU_LIMIT}
+export WINE_HIDE_APU=${HIDE_APU}
+export WINE_HIDE_AMD_GPU=${HIDE_AMD_GPU}
+export WINE_HIDE_INTEL_GPU=${HIDE_INTEL_GPU}
 export WINE_HIDE_NVIDIA_GPU=${HIDE_NVIDIA_GPU}
+export WINE_HIDE_VANGOGH_GPU=${HIDE_VANGOGH_GPU}
+export WINE_HEAP_DELAY_FREE=${HEAP_DELAY_FREE}
+export WINE_HEAP_ZERO_MEMORY=${HEAP_ZERO_MEMORY}
 export ENABLE_VKBASALT=${VKBASALT}
 export GAME_USER=${GAME_USER}
 export GAME_LANG=${GAME_LANG}
+export EOS_USE_ANTICHEATCLIENTNULL=${USE_ANTICHEAT}
 
 # Enable virtual desktop if VIRTUAL_DESKTOP env is set to 1
 if [ "${VIRTUAL_DESKTOP}" = 1 ]; then
@@ -182,24 +198,24 @@ if [ ! -f "$WINE" ] || [ $USE_SYSTEM_WINE = 1 ]; then
 fi
 
 # Check WINEARCH variable and system architecture
-if [ "$WINEARCH" = "win64" ] && ! "$WINE64" --version &>/dev/null; then
-		echo "WINEARCH is set to win64."
-		echo "But seems like your Wine or your system is 32-bit."
-		echo "Use 64-bit Wine or set WINEARCH to win32."
+if [ "$WINEARCH" = "win64" ]; then
+	if ! "$WINE" --version &>/dev/null 2>&1 && ! "$WINE64" --version &>/dev/null 2>&1; then
+        echo "WINEARCH is set to win64."
+        echo "But seems like your Wine or your system is 32-bit."
+        echo "Use 64-bit Wine or set WINEARCH to win32."
 
-		if [ "$(uname -m)" != "x86_64" ]; then
-			echo -e "\nYour system is 32-bit!"
-		fi
-
-		exit
+        if [ "$(uname -m)" != "x86_64" ]; then
+            echo -e "\nYour system is 32-bit!"
+        fi
+        exit
+    fi
 elif [ "$WINEARCH" = "win32" ] && [ $USE_SYSTEM_WINE = 0 ]; then
-	if [ "$(basename "$(readlink -f "$WINE")")" = "wine64" ]; then
-		echo "WINEARCH is set to win32."
-		echo "But seems like your Wine is pure 64-bit without multilib support."
-		echo "Use multilib (or 32-bit) Wine or set WINEARCH to win64."
-
-		exit
-	fi
+    if [ "$(basename "$(readlink -f "$WINE")")" = "wine64" ]; then
+        echo "WINEARCH is set to win32."
+        echo "But seems like your Wine is pure 64-bit without multilib support."
+        echo "Use multilib (or 32-bit) Wine or set WINEARCH to win64."
+        exit
+    fi
 fi
 
 # Check if Wine has PBA or ESYNC features
