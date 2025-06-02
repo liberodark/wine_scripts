@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # About: Wine Portable start script
 # Author: Kron, liberodark
-# Thanks : 
+# Thanks :
 # License: GNU GPLv3
 
 #### Script for launching Wine tools such as winecfg, regedit
