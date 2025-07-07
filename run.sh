@@ -903,12 +903,18 @@ fi
 
 # Set Username & Language
 if [ "${GAME_USER}" != liberodark ] || [ "${GAME_LANG}" != english ]; then
-	SETTINGS_FOLDER="${DIR}/documents/AppData/Roaming/Goldberg SteamEmu Saves/settings"
-	mkdir -p "${SETTINGS_FOLDER}"
-	echo "${GAME_USER}" > "${SETTINGS_FOLDER}/account_name.txt"
-	echo "${GAME_LANG}" > "${SETTINGS_FOLDER}/language.txt"
-	echo "Username : ${GAME_USER}"
-	echo "Language : ${GAME_LANG}"
+    SETTINGS_FOLDER="${DIR}/documents/AppData/Roaming/Goldberg SteamEmu Saves/settings"
+    mkdir -p "${SETTINGS_FOLDER}"
+    echo "${GAME_USER}" > "${SETTINGS_FOLDER}/account_name.txt"
+    echo "${GAME_LANG}" > "${SETTINGS_FOLDER}/language.txt"
+    echo "Username : ${GAME_USER}"
+    echo "Language : ${GAME_LANG}"
+
+    GSE_CONFIG="${DIR}/documents/AppData/Roaming/GSE Saves/settings/configs.user.ini"
+    if [ -f "${GSE_CONFIG}" ]; then
+        sed -i "s/account_name=.*/account_name=${GAME_USER}/" "${GSE_CONFIG}"
+        sed -i "s/language=.*/language=${GAME_LANG}/" "${GSE_CONFIG}"
+    fi
 fi
 
 # Launch the game
