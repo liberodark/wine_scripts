@@ -8,7 +8,7 @@
 # Mega: https://mega.nz/folder/ZZUV1K7J#kIenmTQoi0if-SAcMSuAHA
 # Github: https://github.com/liberodark/wine_scripts
 
-version="1.5.2"
+version="1.5.3"
 
 echo "Welcome on Wine Portable Script $version"
 
@@ -115,6 +115,7 @@ HEAP_DELAY_FREE=0
 HEAP_ZERO_MEMORY=0
 VKBASALT=0
 USE_ANTICHEAT=0
+ICU_DISABLE=0
 
 WINDOWS_VERSION=win10
 PREFIX_ARCH=win64
@@ -743,6 +744,11 @@ if [ "${NVAPI}" = 0 ]; then
 elif [ "${NVAPI}" = 1 ] && [ -f "${DIR}/game_info/dlls/x64/nvapi64.dll" ]; then
 	export DXVK_ENABLE_NVAPI=1
 	export WINEDLLOVERRIDES="${WINEDLLOVERRIDES};nvapi,nvapi64=n"
+fi
+
+## Disable ICU
+if [ "${ICU_DISABLE}" = 1 ]; then
+    export WINEDLLOVERRIDES="${WINEDLLOVERRIDES};icu="
 fi
 
 ## Execute custom scripts
