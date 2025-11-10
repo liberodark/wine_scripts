@@ -162,10 +162,11 @@ if [ "${VIRTUAL_DESKTOP}" = 1 ]; then
 	VDESKTOP="explorer /desktop=Wine,$VIRTUAL_DESKTOP_SIZE"
 fi
 
-# Get current screen resolution
+# Get current screen resolution and refresh rate
 if [ "${RESTORE_RESOLUTION}" = 1 ]; then
 	RESOLUTION="$(xrandr -q | sed -n -e 's/.* connected primary \([^ +]*\).*/\1/p')"
 	OUTPUT="$(xrandr -q | sed -n -e 's/\([^ ]*\) connected primary.*/\1/p')"
+	REFRESH_RATE=$(xrandr -q | sed -n -e "/${SCREEN_NAME} connected primary/ {n; s/.* \([0-9]\+\.[0-9]\+\)\*.*/\1/p}")
 fi
 
 # Make Wine binaries executable
@@ -939,6 +940,6 @@ fi
 
 # Restore screen resolution
 if [ "${RESTORE_RESOLUTION}" = 1 ]; then
-	xrandr --output "$OUTPUT" --mode "$RESOLUTION" &>/dev/null
+	xrandr --output "$OUTPUT" --mode "$RESOLUTION" --rate "$REFRESH_RATE" &>/dev/null
 	xgamma -gamma 1.0 &>/dev/null
 fi
