@@ -8,7 +8,7 @@
 # Mega: https://mega.nz/folder/ZZUV1K7J#kIenmTQoi0if-SAcMSuAHA
 # Github: https://github.com/liberodark/wine_scripts
 
-version="1.5.3"
+version="1.5.4"
 
 echo "Welcome on Wine Portable Script $version"
 
@@ -155,6 +155,8 @@ export WINE_HEAP_ZERO_MEMORY=${HEAP_ZERO_MEMORY}
 export ENABLE_VKBASALT=${VKBASALT}
 export GAME_USER=${GAME_USER}
 export GAME_LANG=${GAME_LANG}
+export GSE_ACCOUNT_NAME=${GAME_USER}
+export GSE_LANGUAGE=${GAME_LANG}
 export EOS_USE_ANTICHEATCLIENTNULL=${USE_ANTICHEAT}
 
 # Enable virtual desktop if VIRTUAL_DESKTOP env is set to 1
@@ -915,12 +917,6 @@ if [ "${GAME_USER}" != liberodark ] || [ "${GAME_LANG}" != english ]; then
     echo "${GAME_LANG}" > "${SETTINGS_FOLDER}/language.txt"
     echo "Username : ${GAME_USER}"
     echo "Language : ${GAME_LANG}"
-
-    GSE_CONFIG="${DIR}/documents/AppData/Roaming/GSE Saves/settings/configs.user.ini"
-    if [ -f "${GSE_CONFIG}" ]; then
-        sed -i "s/account_name=.*/account_name=${GAME_USER}/" "${GSE_CONFIG}"
-        sed -i "s/language=.*/language=${GAME_LANG}/" "${GSE_CONFIG}"
-    fi
 fi
 
 # Launch the game
