@@ -8,7 +8,7 @@
 # Mega: https://mega.nz/folder/ZZUV1K7J#kIenmTQoi0if-SAcMSuAHA
 # Github: https://github.com/liberodark/wine_scripts
 
-version="1.5.4"
+version="1.5.5"
 
 echo "Welcome on Wine Portable Script $version"
 
@@ -446,7 +446,7 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
 		find game_info/dlls -type f -name "*.dll" | while read x; do
 		dll_name=$(basename "$x")
 		case "$dll_name" in
-			d3d8.dll|d3d9.dll|d3d10core.dll|d3d11.dll|d3d12core.dll|d3d12.dll|dxgi.dll|nvapi.dll|nvapi64.dll|nvofapi64.dll)
+			d3d8.dll|d3d9.dll|d3d10core.dll|d3d11.dll|d3d12core.dll|d3d12.dll|dxgi.dll|ddraw.dll|nvapi.dll|nvapi64.dll|nvofapi64.dll)
 				#echo "Skipping registration for $dll_name"
 				# Create symlink and add DLL override to the registry without registration
 				ln -sfr "$x" "${WINEPREFIX}/drive_c/windows/system32/$(basename $x)"
@@ -711,10 +711,10 @@ fi
 if [ "${DXVK}" = 1 ]; then
 			mkdir -p "${WINEPREFIX}/drive_c/windows/system32" "${WINEPREFIX}/drive_c/windows/syswow64"
 			ln -sf "${DIR}/game_info/dlls/x64/"{d3d12.dll,d3d12core.dll,d3d11.dll,d3d10core.dll,d3d9.dll,d3d8.dll,dxgi.dll} "${WINEPREFIX}/drive_c/windows/system32" || exit
-			ln -sf "${DIR}/game_info/dlls/x32/"{d3d12.dll,d3d12core.dll,d3d11.dll,d3d10core.dll,d3d9.dll,d3d8.dll,dxgi.dll} "${WINEPREFIX}/drive_c/windows/syswow64" || exit
+			ln -sf "${DIR}/game_info/dlls/x32/"{d3d12.dll,d3d12core.dll,d3d11.dll,d3d10core.dll,d3d9.dll,d3d8.dll,dxgi.dll,ddraw.dll} "${WINEPREFIX}/drive_c/windows/syswow64" || exit
 	else
 			ln -sf "${DIR}/wine/lib/wine/x86_64-windows/"{d3d12.dll,d3d12core.dll,d3d11.dll,d3d10core.dll,d3d9.dll,d3d8.dll,dxgi.dll} "${WINEPREFIX}/drive_c/windows/system32" || exit
-			ln -sf "${DIR}/wine/lib/wine/i386-windows/"{d3d12.dll,d3d12core.dll,d3d11.dll,d3d10core.dll,d3d9.dll,d3d8.dll,dxgi.dll} "${WINEPREFIX}/drive_c/windows/syswow64" || exit
+			ln -sf "${DIR}/wine/lib/wine/i386-windows/"{d3d12.dll,d3d12core.dll,d3d11.dll,d3d10core.dll,d3d9.dll,d3d8.dll,dxgi.dll,ddraw.dll} "${WINEPREFIX}/drive_c/windows/syswow64" || exit
 fi
 
 if [ "${NVAPI}" = 1 ]; then
@@ -726,10 +726,12 @@ fi
 
 if [ "${DXVK}" = 0 ]; then
 	export DXVK_ASYNC=0
-	export WINEDLLOVERRIDES="${WINEDLLOVERRIDES};dxgi,d3d8,d3d9,d3d10core,d3d11,d3d12,d3d12core=b"
+	export D7VK=0
+	export WINEDLLOVERRIDES="${WINEDLLOVERRIDES};ddraw,dxgi,d3d8,d3d9,d3d10core,d3d11,d3d12,d3d12core=b"
 elif [ "${DXVK}" = 1 ] && [ -f "${DIR}/game_info/dlls/x64/dxgi.dll" ]; then
 	export DXVK_ASYNC=1
-	export WINEDLLOVERRIDES="${WINEDLLOVERRIDES};dxgi,d3d8,d3d9,d3d10core,d3d11,d3d12,d3d12core=n"
+	export D7VK=1
+	export WINEDLLOVERRIDES="${WINEDLLOVERRIDES};ddraw,dxgi,d3d8,d3d9,d3d10core,d3d11,d3d12,d3d12core=n"
 
 	if [ ! -d "${DIR}/cache/dxvk" ]; then
 		mkdir -p "${DIR}/cache/dxvk"
