@@ -8,7 +8,7 @@
 # Mega: https://mega.nz/folder/ZZUV1K7J#kIenmTQoi0if-SAcMSuAHA
 # Github: https://github.com/liberodark/wine_scripts
 
-version="1.5.5"
+version="1.5.6"
 
 echo "Welcome on Wine Portable Script $version"
 
@@ -54,7 +54,8 @@ MSIEXEC="${DIR}/wine/bin/msiexec"
 
 export WINEPREFIX="${DIR}/prefix"
 export WINEDEBUG="-all"
-export WINEDLLOVERRIDES="winemenubuilder.exe="
+WINE_DLLOVERRIDES_BASE="winemenubuilder.exe=;winmm=n,b;version=n,b;reflex=n,b"
+export WINEDLLOVERRIDES="${WINE_DLLOVERRIDES_BASE}"
 
 # Enable WINEDEBUG if --debug argument is passed to script
 if [ "$1" = "--debug" ]; then export WINEDEBUG="err+all,fixme-all"; fi
@@ -116,6 +117,8 @@ HEAP_ZERO_MEMORY=0
 VKBASALT=0
 USE_ANTICHEAT=0
 ICU_DISABLE=0
+CONTROLLER_SDL=0
+DISABLE_STEAMCLIENT=0
 
 WINDOWS_VERSION=win10
 PREFIX_ARCH=win64
@@ -158,6 +161,7 @@ export GAME_LANG=${GAME_LANG}
 export GSE_ACCOUNT_NAME=${GAME_USER}
 export GSE_LANGUAGE=${GAME_LANG}
 export EOS_USE_ANTICHEATCLIENTNULL=${USE_ANTICHEAT}
+export PROTON_DISABLE_LSTEAMCLIENT=${DISABLE_STEAMCLIENT}
 
 # Enable virtual desktop if VIRTUAL_DESKTOP env is set to 1
 if [ "${VIRTUAL_DESKTOP}" = 1 ]; then
@@ -329,7 +333,7 @@ if [ ! -d prefix ] || [ "$USERNAME" != "$(cat .temp_files/lastuser)" ] || [ "$WI
 	export WINEDLLOVERRIDES="${WINEDLLOVERRIDES};mscoree,mshtml="
 	"$WINE" wineboot &>/dev/null
 	"$WINESERVER" -w
-	export WINEDLLOVERRIDES="winemenubuilder.exe="
+	export WINEDLLOVERRIDES="${WINE_DLLOVERRIDES_BASE}"
 
 	# Create symlink to game directory
 	mkdir -p "${GAME_PATH}"; rm -rf "${GAME_PATH}"
@@ -705,6 +709,30 @@ elif [ "${CSMT_DISABLE}" = 0 ] && [ -f "${WINEPREFIX}/drive_c/csmt.reg" ]; then
 	rm -f "${WINEPREFIX}/drive_c/csmt.reg"
 fi
 
+if [ "${CONTROLLER_SDL:-0}" = 1 ] && [ ! -f "${WINEPREFIX}/drive_c/controller_sdl.reg" ]; then
+	echo "Enabling SDL backend for game controllers"
+
+	echo -e "Windows Registry Editor Version 5.00\n" > "${WINEPREFIX}/drive_c/controller_sdl.reg"
+	echo -e "[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\winebus]\n" >> "${WINEPREFIX}/drive_c/controller_sdl.reg"
+	echo -e '"Enable SDL"=dword:00000001' >> "${WINEPREFIX}/drive_c/controller_sdl.reg"
+	echo -e '"DisableHidraw"=dword:00000001' >> "${WINEPREFIX}/drive_c/controller_sdl.reg"
+
+	"$WINE" regedit C:\controller_sdl.reg &>/dev/null
+	"$WINE64" regedit C:\controller_sdl.reg &>/dev/null
+elif [ "${CONTROLLER_SDL:-0}" = 0 ] && [ -f "${WINEPREFIX}/drive_c/controller_sdl.reg" ]; then
+	echo "Disabling SDL backend for game controllers"
+
+	echo -e "Windows Registry Editor Version 5.00\n" > "${WINEPREFIX}/drive_c/controller_sdl.reg"
+	echo -e "[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\winebus]\n" >> "${WINEPREFIX}/drive_c/controller_sdl.reg"
+	echo -e '"Enable SDL"=-' >> "${WINEPREFIX}/drive_c/controller_sdl.reg"
+	echo -e '"DisableHidraw"=-' >> "${WINEPREFIX}/drive_c/controller_sdl.reg"
+
+	"$WINE" regedit C:\controller_sdl.reg &>/dev/null
+	"$WINE64" regedit C:\controller_sdl.reg &>/dev/null
+
+	rm -f "${WINEPREFIX}/drive_c/controller_sdl.reg"
+fi
+
 ## Disable DXVK if required
 ## Also disable nvapi library if DXVK is enabled
 
@@ -838,6 +866,10 @@ fi
 
 if [ "${VKBASALT}" = 1 ]; then
 	echo -ne "\nVKBASALT: enabled"
+fi
+
+if [ "${CONTROLLER_SDL:-0}" = 1 ]; then
+	echo -ne "\nCONTROLLER: SDL"
 fi
 
 if [ "${GAMEMODE}" = 1 ]; then
