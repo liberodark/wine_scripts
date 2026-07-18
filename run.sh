@@ -8,7 +8,7 @@
 # Mega: https://mega.nz/folder/ZZUV1K7J#kIenmTQoi0if-SAcMSuAHA
 # Github: https://github.com/liberodark/wine_scripts
 
-version="1.5.6"
+version="1.5.7"
 
 echo "Welcome on Wine Portable Script $version"
 
@@ -119,6 +119,7 @@ USE_ANTICHEAT=0
 ICU_DISABLE=0
 CONTROLLER_SDL=0
 DISABLE_STEAMCLIENT=0
+DENUVO=0
 
 WINDOWS_VERSION=win10
 PREFIX_ARCH=win64
@@ -162,6 +163,7 @@ export GSE_ACCOUNT_NAME=${GAME_USER}
 export GSE_LANGUAGE=${GAME_LANG}
 export EOS_USE_ANTICHEATCLIENTNULL=${USE_ANTICHEAT}
 export PROTON_DISABLE_LSTEAMCLIENT=${DISABLE_STEAMCLIENT}
+export WINE_DENUVO=${DENUVO}
 
 # Enable virtual desktop if VIRTUAL_DESKTOP env is set to 1
 if [ "${VIRTUAL_DESKTOP}" = 1 ]; then
